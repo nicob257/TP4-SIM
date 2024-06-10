@@ -19,22 +19,37 @@ public class Simulator
     private double minutosLlegada;
     private double minutosFinAtencion;
     private double minutosFinReparacion;
-    private double cantRetirosNoExitosos = 0;
-    private double cantRetiros = 0;
+    private double cantRetirosNoExitosos;
+    private double cantRetiros;
+    private bool inicio;
+    private string estadoRepar = "Libre";
+    private bool reparando;
     public void InicializarSistema()
     {
+        reparando = false;
+        cantRetirosNoExitosos = 0;
+        cantRetiros = 0;
+        rndTiempoAtencion = 0;
+        rndTiempoLlegada = 0;
+        rndTiempoReparacion = 0;
+        rndTipoAtencion = 0;
+        eventos.Clear();
+        estados.Clear();
+        colaRelojes.Clear();
         for (int i = 0; i < 3; i++)
         {
             colaRelojes.Enqueue(new Reloj { Estado = "Listo para retirar" });
         }
 
-        eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = uniformGenerator.Generate(13, 17, rndClase.NextDouble()) });
+        eventos.Add(new Evento { Nombre = "Inicio", Tiempo = 0 });
+
     }
 
-    public void Simular(int tiempoSimulacion, int numIteraciones, int i, int j)
+    public List<StateRow> Simular(int tiempoSimulacion, int numIteraciones, int i, int j)
     {
         double relojSimulacion = 0;
         int iteracion = 0;
+        inicio = true;
 
         while (relojSimulacion < tiempoSimulacion && iteracion < numIteraciones)
         {
@@ -42,36 +57,59 @@ public class Simulator
             Evento eventoActual = eventos[0];
             eventos.RemoveAt(0);
             relojSimulacion = eventoActual.Tiempo;
+            
 
             switch (eventoActual.Nombre)
             {
+                case "Inicio":
+                    ManejarInicio(relojSimulacion);
+                    eventoActual.Nombre = "Llegada Cliente";
+                    break;
                 case "Llegada Cliente":
                     ManejarLlegadaCliente(relojSimulacion);
+                    inicio = false;
                     break;
                 case "Fin Atención Cliente":
                     ManejarFinAtencionCliente(relojSimulacion);
+                    inicio = false;
                     break;
                 case "Fin Reparación Reloj":
                     ManejarFinReparacionReloj(relojSimulacion);
+                    inicio = false;
+                    break;
+                case "Fin Ordenar LT":
+                    ManejarFinOrdenar(relojSimulacion);
+                    inicio = false;
                     break;
             }
 
             if (iteracion >= j && iteracion < j + i)
             {
-                estados.Add(CrearStateRow(relojSimulacion, eventoActual));
+                estados.Add(CrearStateRow(relojSimulacion, eventoActual,inicio));
             }
 
             iteracion++;
         }
 
-        estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion }));
+        estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion },inicio));
         MostrarEstados();
         Console.WriteLine("Cola clientes: " + colaClientes.Count + "|" + "Cola relojes: " + colaRelojes.Count);
         Console.WriteLine("Cantidad retiros: " + cantRetiros + "Cantidad retiros no exitosos: " + cantRetirosNoExitosos + "P: " + (cantRetirosNoExitosos/cantRetiros));
         Console.WriteLine((cantRetirosNoExitosos/cantRetiros));
+        return estados;
+    }
+    private void ManejarInicio(double tiempo)
+    {
+        Cliente cliente = new Cliente();
+
+        rndTiempoLlegada = rndClase.NextDouble();
+        double tiempoLlegada = uniformGenerator.Generate(13, 17, rndTiempoLlegada);
+        minutosLlegada = tiempo + tiempoLlegada;
+        
+        eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
     }
 
-    private void ManejarLlegadaCliente(double tiempo)
+        private void ManejarLlegadaCliente(double tiempo)
     {
         Cliente cliente = new Cliente();
         rndTipoAtencion = rndClase.NextDouble();
@@ -109,7 +147,7 @@ public class Simulator
             List<Reloj> listaRelojes = colaRelojes.ToList();
             if (cliente.Tipo == "Entrega")
             {
-
+                estadoRepar = "Reparando";
                 if (!listaRelojes.Any(r => r.Estado == "En espera de reparación")) {
                     rndTiempoReparacion = rndClase.NextDouble();
                     double tiempoReparacion = GenerarTiempoReparacionReloj(rndTiempoReparacion);
@@ -153,15 +191,33 @@ public class Simulator
 
     private void ManejarFinReparacionReloj(double tiempo)
     {
-        if (colaRelojes.Count > 0)
+        reparando = false;
+        foreach (Reloj reloj in colaRelojes)
         {
-            Reloj reloj = colaRelojes.Dequeue();
-            reloj.Estado = "Listo para retirar";
-            colaRelojes.Enqueue(reloj);
-            if (colaRelojes.Count > 0)
+            if (reloj.Estado == "En espera de reparación")
             {
-                rndTiempoReparacion = rndClase.NextDouble();
-                eventos.Add(new Evento { Nombre = "Fin Reparación Reloj", Tiempo = tiempo + GenerarTiempoReparacionReloj(rndTiempoReparacion) + 5 });
+                reloj.Estado = "Listo para retirar";
+                break;
+            }
+        }
+        eventos.Add(new Evento { Nombre = "Fin Ordenar LT", Tiempo = tiempo + 5 });
+        estadoRepar = "Ordenando";
+    }
+
+    private void ManejarFinOrdenar(double tiempo)
+    {
+        if (colaRelojes.Count() > 0)
+        {
+            foreach (Reloj reloj in colaRelojes)
+            {
+                if (reloj.Estado == "En espera de reparación")
+                {
+                    reloj.Estado = "Reparando";
+                    reparando = true;
+                    rndTiempoReparacion = rndClase.NextDouble();
+                    eventos.Add(new Evento { Nombre = "Fin Reparación Reloj", Tiempo = tiempo + GenerarTiempoReparacionReloj(rndTiempoReparacion) });
+                    break;
+                }
             }
         }
     }
@@ -181,28 +237,42 @@ public class Simulator
         return uniformGenerator.Generate(18, 22, rnd);
     }
 
-    private StateRow CrearStateRow(double tiempo, Evento evento)
+    private StateRow CrearStateRow(double tiempo, Evento evento, bool inicio)
     {
-        var row = new StateRow
+        int retirar = 0;
+        int reparar = 0;
+        foreach (Reloj reloj in colaRelojes)
         {
-            Evento = evento.Nombre,
-            Minutos = tiempo,
-            RndLlegada = evento.Nombre == "Llegada Cliente" ? rndTiempoLlegada : 0,
-            TiempoLlegada = evento.Nombre == "Llegada Cliente" ? GenerarTiempoLlegadaCliente(rndTiempoLlegada) : 0,
-            MinutosLlegada = evento.Nombre == "Llegada Cliente" ? tiempo + GenerarTiempoLlegadaCliente(rndTiempoLlegada) : 0,
+            if (reloj.Estado == "Listo para retirar")
+            {
+                retirar += 1;
+            }
+            else {
+                reparar += 1;
+            }
+
+        }
+            var row = new StateRow
+        {
+            Evento = inicio ? "Inicio" : evento.Nombre,
+            Minutos = Math.Truncate(tiempo*10000)/10000,
+            RndLlegada = evento.Nombre == "Llegada Cliente" ? (Math.Truncate(rndTiempoLlegada*10000)/10000) : 0,
+            TmpLlegada = evento.Nombre == "Llegada Cliente" ? Math.Truncate(GenerarTiempoLlegadaCliente(rndTiempoLlegada)*10000)/10000 : 0,
+            MinLlegada = evento.Nombre == "Llegada Cliente" ? Math.Truncate(tiempo + GenerarTiempoLlegadaCliente(rndTiempoLlegada)*10000)/10000 : 0,
             ColaAtencion = colaClientes.Count,
-            RndTipo = evento.Nombre == "Llegada Cliente" ? rndTipoAtencion : 0,
+            RndTipo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTipoAtencion*10000)/10000 : 0,
             Tipo = colaClientes.Count > 0 && evento.Nombre == "Llegada Cliente" ? colaClientes.Peek().Tipo : "",
-            RndTiempo = evento.Nombre == "Llegada Cliente" ? rndTiempoAtencion : 0,
-            Tiempo = colaClientes.Count > 0 ? colaClientes.Peek().TiempoAtencion : 0,
-            MinutosFinAtencion = tiempo + (colaClientes.Count > 0 ? colaClientes.Peek().TiempoAtencion : 0),
-            ColaReparacion = colaRelojes.Count,
-            RndReparacion = evento.Nombre == "Fin Reparación Reloj" ? rndTiempoReparacion : 0,
-            TiempoReparacion = evento.Nombre == "Fin Reparación Reloj" ? GenerarTiempoReparacionReloj(rndTiempoReparacion) : 0,
-            MinutosFinReparacion = evento.Nombre == "Fin Reparación Reloj" ? tiempo + GenerarTiempoReparacionReloj(rndTiempoReparacion) + 5 : 0,
+            RndTiempo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTiempoAtencion * 10000) / 10000 : 0,
+            Tiempo = colaClientes.Count > 0 ? Math.Truncate(colaClientes.Peek().TiempoAtencion*10000)/ 10000 : 0,
+            MinFinAtencion = Math.Truncate(tiempo+ (colaClientes.Count > 0 ? colaClientes.Peek().TiempoAtencion : 0)*10000) / 10000,
+            ColaReparacion = reparar,
+            ColaRetiro = retirar,
+            RndReparacion = evento.Nombre == "Fin Reparación Reloj" ? Math.Truncate(rndTiempoReparacion * 10000) / 10000 : 0,
+            TmpReparacion = evento.Nombre == "Fin Reparación Reloj" ? Math.Truncate(GenerarTiempoReparacionReloj(rndTiempoReparacion) * 10000) / 10000 : 0,
+            MinFinRepar = evento.Nombre == "Fin Reparación Reloj" ? Math.Truncate((tiempo + GenerarTiempoReparacionReloj(rndTiempoReparacion) + 5)*10000)/10000 : 0,
             EstadoAtencion = colaClientes.Count > 0 ? "Atendiendo" : "Libre",
-            EstadoReparacion = colaRelojes.Count > 0 ? "Reparando" : "Libre"
-        };
+            EstadoRepar = estadoRepar
+            };
 
         return row;
     }
@@ -211,15 +281,13 @@ public class Simulator
     {
         foreach (var row in estados)
         {
-            Console.WriteLine($"Evento: {row.Evento}, Minutos: {row.Minutos}, RND Llegada: {row.RndLlegada}, Tiempo Llegada: {row.TiempoLlegada}, Minutos Llegada: {row.MinutosLlegada}, " +
-                              $"Cola Atencion: {row.ColaAtencion}, RND Tipo: {row.RndTipo}, Tipo: {row.Tipo}, RND Tiempo: {row.RndTiempo}, Tiempo: {row.Tiempo}, Minutos Fin Atencion: {row.MinutosFinAtencion}, " +
-                              $"Cola Reparacion: {row.ColaReparacion}, RND Reparacion: {row.RndReparacion}, Tiempo Reparacion: {row.TiempoReparacion}, Minutos Fin Reparacion: {row.MinutosFinReparacion}, " +
-                              $"Estado Atencion: {row.EstadoAtencion}, Estado Reparacion: {row.EstadoReparacion}");
+            Console.WriteLine($"Evento: {row.Evento}, Minutos: {row.Minutos}, RND Llegada: {row.RndLlegada}, Tiempo Llegada: {row.TmpLlegada}, Minutos Llegada: {row.MinLlegada}, " +
+                              $"Cola Atencion: {row.ColaAtencion}, RND Tipo: {row.RndTipo}, Tipo: {row.Tipo}, RND Tiempo: {row.RndTiempo}, Tiempo: {row.Tiempo}, Minutos Fin Atencion: {row.MinFinAtencion}, " +
+                              $"Cola Reparacion: {row.ColaReparacion}, RND Reparacion: {row.RndReparacion}, Tiempo Reparacion: {row.TmpReparacion}, Minutos Fin Reparacion: {row.MinFinRepar}, " +
+                              $"Estado Atencion: {row.EstadoAtencion}, Estado Reparacion: {row.EstadoRepar}");
             // Completa el resto de la información que deseas mostrar
         }
     }
-
-    public List<StateRow> Estados => estados;  // Exponer la lista de estados 
 }
 
 

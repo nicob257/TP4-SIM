@@ -12,19 +12,62 @@ namespace RelojeriaSimulacion
         {
             InitializeComponent();
             simulator = new Simulator();
-            simulator.InicializarSistema();
         }
 
         private void btnSimular_Click(object sender, EventArgs e)
         {
+            simulator.InicializarSistema();
+            dataGridViewResultados.DataSource = null;
             // Ejecutar la simulación
-            simulator.Simular(1000, 100, 100, 0); // Ajusta los parámetros según sea necesario
-
-            // Obtener los estados resultantes
-            List<StateRow> estados = simulator.Estados;
+            List<StateRow> estados = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text), Convert.ToInt32(i.Text), Convert.ToInt32(j.Text));
 
             // Mostrar resultados en el DataGridView
             dataGridViewResultados.DataSource = estados;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tiempo_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridViewResultados_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void i_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
