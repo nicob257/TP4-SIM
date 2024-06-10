@@ -37,12 +37,13 @@
             this.dataGridViewResultados.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewResultados.Location = new System.Drawing.Point(12, 41);
             this.dataGridViewResultados.Name = "dataGridViewResultados";
-            this.dataGridViewResultados.Size = new System.Drawing.Size(760, 407);
+            this.dataGridViewResultados.RowHeadersWidth = 51;
+            this.dataGridViewResultados.Size = new System.Drawing.Size(1532, 431);
             this.dataGridViewResultados.TabIndex = 1;
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(784, 461);
+            this.ClientSize = new System.Drawing.Size(1374, 598);
             this.Controls.Add(this.dataGridViewResultados);
             this.Controls.Add(this.btnSimular);
             this.Name = "Form1";

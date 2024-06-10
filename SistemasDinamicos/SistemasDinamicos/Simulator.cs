@@ -19,6 +19,8 @@ public class Simulator
     private double minutosLlegada;
     private double minutosFinAtencion;
     private double minutosFinReparacion;
+    private double cantRetirosNoExitosos = 0;
+    private double cantRetiros = 0;
     public void InicializarSistema()
     {
         for (int i = 0; i < 3; i++)
@@ -26,7 +28,7 @@ public class Simulator
             colaRelojes.Enqueue(new Reloj { Estado = "Listo para retirar" });
         }
 
-        eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = 15 });
+        eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = uniformGenerator.Generate(13, 17, rndClase.NextDouble()) });
     }
 
     public void Simular(int tiempoSimulacion, int numIteraciones, int i, int j)
@@ -65,6 +67,8 @@ public class Simulator
         estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion }));
         MostrarEstados();
         Console.WriteLine("Cola clientes: " + colaClientes.Count + "|" + "Cola relojes: " + colaRelojes.Count);
+        Console.WriteLine("Cantidad retiros: " + cantRetiros + "Cantidad retiros no exitosos: " + cantRetirosNoExitosos + "P: " + (cantRetirosNoExitosos/cantRetiros));
+        Console.WriteLine((cantRetirosNoExitosos/cantRetiros));
     }
 
     private void ManejarLlegadaCliente(double tiempo)
@@ -106,7 +110,7 @@ public class Simulator
             if (cliente.Tipo == "Entrega")
             {
 
-                if (!listaRelojes.Contains(new Reloj { Estado = "En espera de reparación"})) {
+                if (!listaRelojes.Any(r => r.Estado == "En espera de reparación")) {
                     rndTiempoReparacion = rndClase.NextDouble();
                     double tiempoReparacion = GenerarTiempoReparacionReloj(rndTiempoReparacion);
                     minutosFinReparacion = tiempo + tiempoReparacion;
@@ -118,15 +122,23 @@ public class Simulator
             }
             else if (cliente.Tipo == "Retiro")
             {
-                // ACA HAY QUE CAMBIAR ALGO SEGURO, puse el if para que no crashee si no hay relojes nomas xd
-                if (colaRelojes.Count > 1)
-                {
-                    Reloj reloj = colaRelojes.Peek();
-                    if (reloj.Estado == "Listo para retirar")
-                    {
-                        colaRelojes.Dequeue();
-                    }
+                cantRetiros++;
+                if (listaRelojes.Any(r => r.Estado == "Listo para retirar")) {
+
+                    // SEGUIR ACA MI REY
+                    int indice = listaRelojes.FindIndex((r => r.Estado == "Listo para retirar"));
+                    listaRelojes.RemoveAt(indice);
+                    colaRelojes.Clear();
+                        for (int i = 0; i < listaRelojes.Count; i++)
+                        {
+                            colaRelojes.Enqueue(listaRelojes[i]);
+                        }
                 }
+                else
+                {
+                    cantRetirosNoExitosos++;
+                }
+                
                 
             }
         }
@@ -180,7 +192,7 @@ public class Simulator
             MinutosLlegada = evento.Nombre == "Llegada Cliente" ? tiempo + GenerarTiempoLlegadaCliente(rndTiempoLlegada) : 0,
             ColaAtencion = colaClientes.Count,
             RndTipo = evento.Nombre == "Llegada Cliente" ? rndTipoAtencion : 0,
-            Tipo = colaClientes.Count > 0 ? colaClientes.Peek().Tipo : "",
+            Tipo = colaClientes.Count > 0 && evento.Nombre == "Llegada Cliente" ? colaClientes.Peek().Tipo : "",
             RndTiempo = evento.Nombre == "Llegada Cliente" ? rndTiempoAtencion : 0,
             Tiempo = colaClientes.Count > 0 ? colaClientes.Peek().TiempoAtencion : 0,
             MinutosFinAtencion = tiempo + (colaClientes.Count > 0 ? colaClientes.Peek().TiempoAtencion : 0),

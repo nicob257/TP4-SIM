@@ -9,5 +9,6 @@ public class Reloj
 {
     public string Estado { get; set; }
     public double TiempoReparacion { get; set; }
+
 }
 
