@@ -47,7 +47,7 @@ public class Simulator
 
     }
 
-    public List<StateRow> Simular(int tiempoSimulacion, int numIteraciones, int i, int j)
+    public List<StateRow> Simular(int tiempoSimulacion, int numIteraciones, int i, int j, double pCompra, double pEntrega, double pRetiro)
     {
         double relojSimulacion = 0;
         int iteracion = 0;
@@ -68,7 +68,7 @@ public class Simulator
                     eventoActual.Nombre = "Llegada Cliente";
                     break;
                 case "Llegada Cliente":
-                    ManejarLlegadaCliente(relojSimulacion);
+                    ManejarLlegadaCliente(relojSimulacion, pCompra, pEntrega, pRetiro);
                     inicio = false;
                     break;
                 case "Fin Atención Cliente":
@@ -96,8 +96,8 @@ public class Simulator
         estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion },inicio));
         MostrarEstados();
         Console.WriteLine("Cola clientes: " + colaClientes.Count + "|" + "Cola relojes: " + colaRelojes.Count);
-        Console.WriteLine("Cantidad retiros: " + cantRetiros + "Cantidad retiros no exitosos: " + cantRetirosNoExitosos + "P: " + (cantRetirosNoExitosos/cantRetiros));
-        Console.WriteLine((cantRetirosNoExitosos/cantRetiros));
+        //Console.WriteLine("Cantidad retiros: " + cantRetiros + "Cantidad retiros no exitosos: " + cantRetirosNoExitosos + "P: " + (cantRetirosNoExitosos/cantRetiros));
+        //Console.WriteLine((cantRetirosNoExitosos/cantRetiros));
         return estados;
     }
     private void ManejarInicio(double tiempo)
@@ -111,18 +111,19 @@ public class Simulator
         eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
     }
 
-        private void ManejarLlegadaCliente(double tiempo)
+        private void ManejarLlegadaCliente(double tiempo, double pCompra, double pEntrega, double pRetiro)
     {
         Cliente cliente = new Cliente();
         rndTipoAtencion = rndClase.NextDouble();
-        
-        if (rndTipoAtencion <= 0.45)
+
+        if (rndTipoAtencion <= pCompra)
         {
+            Console.WriteLine("Estado: " + (rndTipoAtencion <= pCompra) + "P(Compra): " + pCompra.ToString());
             cliente.Tipo = "Compra";
             rndTiempoAtencion = rndClase.NextDouble();
             cliente.TiempoAtencion = GenerarTiempoAtencionCompra(rndTiempoAtencion);
         }
-        else if (rndTipoAtencion <= 0.70)
+        else if (rndTipoAtencion <= (pCompra + pEntrega))
         {
             cliente.Tipo = "Entrega";
             cliente.TiempoAtencion = 3;

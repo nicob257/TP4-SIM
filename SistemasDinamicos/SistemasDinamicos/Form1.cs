@@ -19,7 +19,8 @@ namespace RelojeriaSimulacion
             simulator.InicializarSistema();
             dataGridViewResultados.DataSource = null;
             // Ejecutar la simulación
-            List<StateRow> estados = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text), Convert.ToInt32(i.Text), Convert.ToInt32(j.Text));
+            List<StateRow> estados = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text), Convert.ToInt32(i.Text), Convert.ToInt32(j.Text),
+                Convert.ToDouble(txtProbCompra.Text), Convert.ToDouble(txtProbEntrega.Text), Convert.ToDouble(txtProbRetiro.Text));
 
             // Mostrar resultados en el DataGridView
             dataGridViewResultados.DataSource = estados;
