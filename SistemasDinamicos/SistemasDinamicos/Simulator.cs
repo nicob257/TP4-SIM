@@ -35,6 +35,7 @@ public class Simulator
         rndTiempoLlegada = 0;
         rndTiempoReparacion = 0;
         rndTipoAtencion = 0;
+        minutosFinAtencion = 0;
         eventos.Clear();
         estados.Clear();
         colaRelojes.Clear();
