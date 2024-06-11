@@ -267,7 +267,7 @@ public class Simulator
             Tipo = colaClientes.Count > 0 && evento.Nombre == "Llegada Cliente" ? colaClientes.Peek().Tipo : "",
             RndTiempo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTiempoAtencion * 10000) / 10000 : 0,
             Tiempo = colaClientes.Count > 0 ? Math.Truncate(colaClientes.Peek().TiempoAtencion*10000)/ 10000 : 0,
-            MinFinAtencion = Math.Truncate((tiempo+ (colaClientes.Count > 0 ? colaClientes.Peek().TiempoAtencion : 0))*10000) / 10000,
+            MinFinAtencion = Math.Truncate((colaClientes.Count > 0 ? minutosFinAtencion : 0)*10000) / 10000,
             RelojARepar = reparar,
             RelojARetir = retirar,
             RndReparacion = reparando ? Math.Truncate(rndTiempoReparacion * 10000) / 10000 : 0,
