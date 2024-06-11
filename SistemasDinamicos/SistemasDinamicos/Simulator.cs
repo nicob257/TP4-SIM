@@ -42,8 +42,9 @@ public class Simulator
         {
             colaRelojes.Enqueue(new Reloj { Estado = "Listo para retirar" });
         }
+        Evento inicioEvento = new Evento { Nombre = "Inicio", Tiempo = 0 };
+        eventos.Add(inicioEvento);
 
-        eventos.Add(new Evento { Nombre = "Inicio", Tiempo = 0 });
 
     }
 
@@ -52,6 +53,7 @@ public class Simulator
         double relojSimulacion = 0;
         int iteracion = 0;
         inicio = true;
+        
 
         while (relojSimulacion < tiempoSimulacion && iteracion < numIteraciones)
         {
@@ -65,7 +67,6 @@ public class Simulator
             {
                 case "Inicio":
                     ManejarInicio(relojSimulacion);
-                    eventoActual.Nombre = "Llegada Cliente";
                     break;
                 case "Llegada Cliente":
                     ManejarLlegadaCliente(relojSimulacion, pCompra, pEntrega, pRetiro);
@@ -102,11 +103,10 @@ public class Simulator
     }
     private void ManejarInicio(double tiempo)
     {
-        Cliente cliente = new Cliente();
-
         rndTiempoLlegada = rndClase.NextDouble();
         double tiempoLlegada = uniformGenerator.Generate(13, 17, rndTiempoLlegada);
         minutosLlegada = tiempo + tiempoLlegada;
+        
         
         eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
     }
@@ -250,18 +250,18 @@ public class Simulator
             {
                 retirar += 1;
             }
-            else {
+            else if (reloj.Estado != "En espera de reparación") {
                 reparar += 1;
             }
 
         }
             var row = new StateRow
         {
-            Evento = inicio ? "Inicio" : evento.Nombre,
+            Evento = evento.Nombre,
             Minutos = Math.Truncate(tiempo*10000)/10000,
-            RndLlegada = evento.Nombre == "Llegada Cliente" ? (Math.Truncate(rndTiempoLlegada*10000)/10000) : 0,
-            TmpLlegada = evento.Nombre == "Llegada Cliente" ? Math.Truncate(GenerarTiempoLlegadaCliente(rndTiempoLlegada)*10000)/10000 : 0,
-            MinLlegada = evento.Nombre == "Llegada Cliente" ? Math.Truncate((tiempo + GenerarTiempoLlegadaCliente(rndTiempoLlegada))*10000)/10000 : 0,
+            RndLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio") ? (Math.Truncate(rndTiempoLlegada*10000)/10000) : 0,
+            TmpLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio")? Math.Truncate(minutosLlegada*10000)/10000 : 0,
+            MinLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio")? Math.Truncate((tiempo + GenerarTiempoLlegadaCliente(rndTiempoLlegada))*10000)/10000 : 0,
             ColaAtencion = colaClientes.Count,
             RndTipo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTipoAtencion*10000)/10000 : 0,
             Tipo = colaClientes.Count > 0 && evento.Nombre == "Llegada Cliente" ? colaClientes.Peek().Tipo : "",
