@@ -24,6 +24,7 @@ namespace RelojeriaSimulacion
 
             // Mostrar resultados en el DataGridView
             dataGridViewResultados.DataSource = estados;
+            lblPNoReparado.Text = simulator.ObtenerPNoReparado().ToString();
         }
 
         private void label1_Click(object sender, EventArgs e)

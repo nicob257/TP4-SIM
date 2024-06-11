@@ -98,8 +98,7 @@ public class Simulator
         estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion },inicio));
         MostrarEstados();
         Console.WriteLine("Cola clientes: " + colaClientes.Count + "|" + "Cola relojes: " + colaRelojes.Count);
-        //Console.WriteLine("Cantidad retiros: " + cantRetiros + "Cantidad retiros no exitosos: " + cantRetirosNoExitosos + "P: " + (cantRetirosNoExitosos/cantRetiros));
-        //Console.WriteLine((cantRetirosNoExitosos/cantRetiros));
+        
         return estados;
     }
     private void ManejarInicio(double tiempo)
@@ -293,6 +292,17 @@ public class Simulator
                               $"Estado Atencion: {row.EstadoAtencion}, Estado Reparacion: {row.EstadoRepar}");
             // Completa el resto de la información que deseas mostrar
         }
+    }
+
+
+    public double ObtenerPNoReparado()
+    {
+        if (cantRetiros != 0)
+        {
+            return Math.Round(((double)cantRetirosNoExitosos / (double)cantRetiros), 4);
+        }
+            
+        else return 0;
     }
 }
 
