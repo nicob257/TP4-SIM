@@ -18,14 +18,14 @@ public class StateRow
     public double RndTiempo { get; set; }
     public double Tiempo { get; set; }
     public double MinFinAtencion { get; set; }
-    public int ColaRetiro { get; set; }
-    public int ColaReparacion { get; set; }
+    public int RelojARetir { get; set; }
+    public int RelojARepar { get; set; }
     public double RndReparacion { get; set; }
     public double TmpReparacion { get; set; }
     public double MinFinRepar { get; set; }
     public string EstadoAtencion { get; set; }
     public string EstadoRepar { get; set; }
-
-
+    public int CantReti { get; set; }
+    public int RetFrac { get; set; }
 }
 
