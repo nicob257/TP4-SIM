@@ -20,11 +20,14 @@ namespace RelojeriaSimulacion
             dataGridViewResultados.DataSource = null;
             // Ejecutar la simulación
             List<StateRow> estados = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text), Convert.ToInt32(i.Text), Convert.ToInt32(j.Text),
-                Convert.ToDouble(txtProbCompra.Text), Convert.ToDouble(txtProbEntrega.Text), Convert.ToDouble(txtProbRetiro.Text));
+                Convert.ToDouble(txtProbCompra.Text), Convert.ToDouble(txtProbEntrega.Text), Convert.ToDouble(txtProbRetiro.Text),
+                Convert.ToInt32(txtLiLleg.Text), Convert.ToInt32(txtLsLleg.Text), Convert.ToInt32(txtLiCp.Text), Convert.ToInt32(txtLsCp.Text), Convert.ToInt32(txtLiRep.Text), Convert.ToInt32(txtLsRep.Text));
 
             // Mostrar resultados en el DataGridView
             dataGridViewResultados.DataSource = estados;
             lblPNoReparado.Text = simulator.ObtenerPNoReparado().ToString();
+            ocupAy.Text = simulator.ObtenerPorcOcupacionAyudante().ToString();
+            ocupRel.Text = simulator.ObtenerPorcOcupacionRelojero().ToString();
         }
 
         private void label1_Click(object sender, EventArgs e)

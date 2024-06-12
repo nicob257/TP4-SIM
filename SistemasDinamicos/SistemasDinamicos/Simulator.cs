@@ -28,6 +28,8 @@ public class Simulator
     private bool noHay;
     private double tiempoAtencionRelojero;
     private double tiempoAtencionAyudante;
+    private double tiempoFinSimulacion;
+    
     public void InicializarSistema()
     {
         reparando = false;
@@ -41,6 +43,8 @@ public class Simulator
         eventos.Clear();
         estados.Clear();
         colaRelojes.Clear();
+        tiempoAtencionAyudante = 0;
+        tiempoAtencionRelojero = 0;
         for (int i = 0; i < 3; i++)
         {
             colaRelojes.Enqueue(new Reloj { Estado = "Listo para retirar" });
@@ -51,7 +55,9 @@ public class Simulator
 
     }
 
-    public List<StateRow> Simular(int tiempoSimulacion, int numIteraciones, int i, int j, double pCompra, double pEntrega, double pRetiro)
+    public List<StateRow> Simular(int tiempoSimulacion, int numIteraciones, int i, int j, 
+        double pCompra, double pEntrega, double pRetiro, 
+        int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj)
     {
         double relojSimulacion = 0;
         int iteracion = 0;
@@ -69,56 +75,73 @@ public class Simulator
             switch (eventoActual.Nombre)
             {
                 case "Inicio":
-                    ManejarInicio(relojSimulacion);
+                    ManejarInicio(relojSimulacion, liTiempoLlegCli, lsTiempoLlegCli);
                     break;
                 case "Llegada Cliente":
-                    ManejarLlegadaCliente(relojSimulacion, pCompra, pEntrega, pRetiro);
+                    ManejarLlegadaCliente(relojSimulacion, pCompra, pEntrega, pRetiro, liTiempoLlegCli, lsTiempoLlegCli, liTiempoAtCompra, lsTiempoAtCompra);
                     inicio = false;
                     break;
                 case "Fin Atención Cliente":
-                    tiempoAtencionAyudante += colaClientes.Peek().TiempoAtencion; 
-                    ManejarFinAtencionCliente(relojSimulacion);
+                    if (colaClientes.Count > 0)
+                    {
+                        tiempoAtencionAyudante += colaClientes.Peek().TiempoAtencion;
+                    }
+                    
+                    ManejarFinAtencionCliente(relojSimulacion, liTiempoRepReloj, lsTiempoRepReloj);
                     inicio = false;
                     break;
                 case "Fin Reparación Reloj":
-                    tiempoAtencionRelojero += GenerarTiempoReparacionReloj(rndTiempoReparacion);
+                    tiempoAtencionRelojero += GenerarTiempoReparacionReloj(liTiempoRepReloj, lsTiempoRepReloj, rndTiempoReparacion);
                     ManejarFinReparacionReloj(relojSimulacion);
                     inicio = false;
                     break;
                 case "Fin Ordenar LT":
-                    ManejarFinOrdenar(relojSimulacion);
+                    ManejarFinOrdenar(relojSimulacion, liTiempoRepReloj, lsTiempoRepReloj);
                     inicio = false;
                     break;
             }
 
             if (iteracion >= j && iteracion < j + i)
             {
-                estados.Add(CrearStateRow(relojSimulacion, eventoActual,inicio));
+                estados.Add(CrearStateRow(relojSimulacion, eventoActual,inicio,
+                    liTiempoLlegCli, lsTiempoLlegCli, liTiempoAtCompra, lsTiempoAtCompra, liTiempoRepReloj, lsTiempoRepReloj));
             }
 
             iteracion++;
         }
+        tiempoFinSimulacion += relojSimulacion;
+        if (minutosFinAtencion != 0)
+        {
+            tiempoAtencionAyudante += (colaClientes.Peek().TiempoAtencion - (minutosFinAtencion - tiempoFinSimulacion));
+        }
+        if (minutosFinReparacion != 0)
+        {
+            tiempoAtencionRelojero += (GenerarTiempoReparacionReloj(liTiempoRepReloj, lsTiempoRepReloj, rndTiempoReparacion) - (minutosFinReparacion - tiempoFinSimulacion));
+        }
+       
+        
 
-        estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion },inicio));
-        MostrarEstados();
+        estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion },inicio,
+            liTiempoLlegCli, lsTiempoLlegCli, liTiempoAtCompra, lsTiempoAtCompra, liTiempoRepReloj, lsTiempoRepReloj));
+        //MostrarEstados();
+        
 
         Console.WriteLine("Cola clientes: " + colaClientes.Count + "|" + "Cola relojes: " + colaRelojes.Count);
-        Console.WriteLine("Tiempo atención relojero: " + tiempoAtencionRelojero);
-        Console.WriteLine("Tiempo atención ayudante: " + tiempoAtencionAyudante);
-        
+       
         return estados;
     }
-    private void ManejarInicio(double tiempo)
+    private void ManejarInicio(double tiempo, int liLlegada, int lsLlegada)
     {
         rndTiempoLlegada = rndClase.NextDouble();
-        double tiempoLlegada = uniformGenerator.Generate(13, 17, rndTiempoLlegada);
+        double tiempoLlegada = GenerarTiempoLlegadaCliente(liLlegada, lsLlegada, rndTiempoLlegada);
         minutosLlegada = tiempo + tiempoLlegada;
         
         
         eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
     }
 
-    private void ManejarLlegadaCliente(double tiempo, double pCompra, double pEntrega, double pRetiro)
+    private void ManejarLlegadaCliente(double tiempo, double pCompra, double pEntrega, double pRetiro, 
+        int liLlegada, int lsLlegada, int liAtCompra, int lsAtCompra)
     {
         Cliente cliente = new Cliente();
         rndTipoAtencion = rndClase.NextDouble();
@@ -128,7 +151,7 @@ public class Simulator
             Console.WriteLine("Estado: " + (rndTipoAtencion <= pCompra) + "P(Compra): " + pCompra.ToString());
             cliente.Tipo = "Compra";
             rndTiempoAtencion = rndClase.NextDouble();
-            cliente.TiempoAtencion = GenerarTiempoAtencionCompra(rndTiempoAtencion);
+            cliente.TiempoAtencion = GenerarTiempoAtencionCompra(liAtCompra, lsAtCompra, rndTiempoAtencion);
         }
         else if (rndTipoAtencion <= (pCompra + pEntrega))
         {
@@ -144,12 +167,12 @@ public class Simulator
         eventos.Add(new Evento { Nombre = "Fin Atención Cliente", Tiempo = minutosFinAtencion });
         colaClientes.Enqueue(cliente);
         rndTiempoLlegada = rndClase.NextDouble();
-        double tiempoLlegada = uniformGenerator.Generate(13, 17, rndTiempoLlegada);
+        double tiempoLlegada = GenerarTiempoLlegadaCliente(liLlegada, lsLlegada, rndTiempoLlegada);
         minutosLlegada = tiempo + tiempoLlegada;
         eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
     }
 
-    private void ManejarFinAtencionCliente(double tiempo)
+    private void ManejarFinAtencionCliente(double tiempo, int liRepReloj, int lsRepReloj)
     {
         if (colaClientes.Count > 0)
         {
@@ -170,7 +193,7 @@ public class Simulator
                     estadoRepar = "Reparando";
                     colaRelojes.Enqueue(new Reloj { Estado = "En espera de reparación" });
                     rndTiempoReparacion = rndClase.NextDouble();
-                    double tiempoReparacion = GenerarTiempoReparacionReloj(rndTiempoReparacion);
+                    double tiempoReparacion = GenerarTiempoReparacionReloj(liRepReloj, lsRepReloj, rndTiempoReparacion);
                     minutosFinReparacion = tiempo + tiempoReparacion;
                     eventos.Add(new Evento { Nombre = "Fin Reparación Reloj", Tiempo = minutosFinReparacion });
                     reparando = true;
@@ -228,7 +251,7 @@ public class Simulator
         estadoRepar = "Ordenando";
     }
 
-    private void ManejarFinOrdenar(double tiempo)
+    private void ManejarFinOrdenar(double tiempo, int liRepReloj, int lsRepReloj)
     {
         estadoRepar = "Libre";
         if (colaRelojes.Count() > 0)
@@ -241,29 +264,30 @@ public class Simulator
                     reloj.Estado = "Reparando";
                     reparando = true;
                     rndTiempoReparacion = rndClase.NextDouble();
-                    eventos.Add(new Evento { Nombre = "Fin Reparación Reloj", Tiempo = tiempo + GenerarTiempoReparacionReloj(rndTiempoReparacion) });
+                    eventos.Add(new Evento { Nombre = "Fin Reparación Reloj", Tiempo = tiempo + GenerarTiempoReparacionReloj(liRepReloj, lsRepReloj, rndTiempoReparacion) });
                     break;
                 }
             }
         }
     }
 
-    private double GenerarTiempoLlegadaCliente(double rnd)
+    private double GenerarTiempoLlegadaCliente(int li, int ls, double rnd)
     {
-        return uniformGenerator.Generate(13, 17, rnd);
+        return uniformGenerator.Generate(li, ls, rnd);
     }
 
-    private double GenerarTiempoAtencionCompra(double rnd)
+    private double GenerarTiempoAtencionCompra(int li, int ls, double rnd)
     {
-        return uniformGenerator.Generate(6, 10, rnd);
+        return uniformGenerator.Generate(li, ls, rnd);
     }
 
-    private double GenerarTiempoReparacionReloj(double rnd)
+    private double GenerarTiempoReparacionReloj(int li, int ls, double rnd)
     {
-        return uniformGenerator.Generate(18, 22, rnd);
+        return uniformGenerator.Generate(li, ls, rnd);
     }
 
-    private StateRow CrearStateRow(double tiempo, Evento evento, bool inicio)
+    private StateRow CrearStateRow(double tiempo, Evento evento, bool inicio,
+        int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj)
     {
         int retirar = 0;
         int reparar = 0;
@@ -283,39 +307,41 @@ public class Simulator
             Evento = evento.Nombre,
             Minutos = Math.Truncate(tiempo*10000)/10000,
             RndLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio") ? (Math.Truncate(rndTiempoLlegada*10000)/10000) : 0,
-            TmpLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio")? Math.Truncate(minutosLlegada*10000)/10000 : 0,
-            MinLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio")? Math.Truncate((tiempo + GenerarTiempoLlegadaCliente(rndTiempoLlegada))*10000)/10000 : 0,
+            TmpLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio")? Math.Truncate((GenerarTiempoLlegadaCliente(liTiempoLlegCli, lsTiempoLlegCli, rndTiempoLlegada)) * 10000) / 10000 : 0,
+            MinLlegada = (evento.Nombre == "Llegada Cliente" || evento.Nombre == "Inicio")? Math.Truncate(minutosLlegada * 10000) / 10000 : 0,
             ColaAtencion = colaClientes.Count,
             RndTipo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTipoAtencion*10000)/10000 : 0,
             Tipo = colaClientes.Count > 0 && evento.Nombre == "Llegada Cliente" ? colaClientes.Peek().Tipo : "",
-            RndTiempo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTiempoAtencion * 10000) / 10000 : 0,
-            Tiempo = (evento.Nombre == "Llegada Cliente" && colaClientes.Count > 0) ? Math.Truncate(colaClientes.Peek().TiempoAtencion*10000)/ 10000 : 0,
+            RndTiempo = (evento.Nombre == "Llegada Cliente" && colaClientes.Peek().Tipo == "Compra") ? Math.Truncate(rndTiempoAtencion * 10000) / 10000 : 0,
+            TiempoAt = (evento.Nombre == "Llegada Cliente" && colaClientes.Count > 0) ? Math.Truncate(colaClientes.Peek().TiempoAtencion*10000)/ 10000 : 0,
             MinFinAtencion = Math.Truncate(((evento.Nombre == "Llegada Cliente" && colaClientes.Count > 0) ? minutosFinAtencion : 0)*10000) / 10000,
             RelojARepar = reparar,
             RelojARetir = retirar,
             RndReparacion = reparando ? Math.Truncate(rndTiempoReparacion * 10000) / 10000 : 0,
-            TmpReparacion = reparando ? Math.Truncate(GenerarTiempoReparacionReloj(rndTiempoReparacion) * 10000) / 10000 : 0,
-            MinFinRepar = reparando ? Math.Truncate((tiempo + GenerarTiempoReparacionReloj(rndTiempoReparacion))*10000)/10000 : 0,
+            TmpReparacion = reparando ? Math.Truncate(GenerarTiempoReparacionReloj(liTiempoRepReloj, lsTiempoRepReloj, rndTiempoReparacion) * 10000) / 10000 : 0,
+            MinFinRepar = reparando ? Math.Truncate((minutosFinReparacion)*10000)/10000 : 0,
             EstadoAtencion = colaClientes.Count > 0 ? "Atendiendo" : "Libre",
             EstadoRepar = estadoRepar,
             CantReti = cantRetiros,
             RetFrac = cantRetirosNoExitosos,
+            TiAtAyudante = Math.Round(tiempoAtencionAyudante, 2),
+            TiAtRelojero = Math.Round(tiempoAtencionRelojero, 2),
             };
         reparando = false;
         return row;
     }
 
-    private void MostrarEstados()
-    {
-        foreach (var row in estados)
-        {
-            Console.WriteLine($"Evento: {row.Evento}, Minutos: {row.Minutos}, RND Llegada: {row.RndLlegada}, Tiempo Llegada: {row.TmpLlegada}, Minutos Llegada: {row.MinLlegada}, " +
-                              $"Cola Atencion: {row.ColaAtencion}, RND Tipo: {row.RndTipo}, Tipo: {row.Tipo}, RND Tiempo: {row.RndTiempo}, Tiempo: {row.Tiempo}, Minutos Fin Atencion: {row.MinFinAtencion}, " +
-                              $"Cola Reparacion: {row.RelojARepar}, RND Reparacion: {row.RndReparacion}, Tiempo Reparacion: {row.TmpReparacion}, Minutos Fin Reparacion: {row.MinFinRepar}, " +
-                              $"Estado Atencion: {row.EstadoAtencion}, Estado Reparacion: {row.EstadoRepar}");
-            // Completa el resto de la información que deseas mostrar
-        }
-    }
+    //private void MostrarEstados()
+    //{
+    //    foreach (var row in estados)
+    //    {
+    //        Console.WriteLine($"Evento: {row.Evento}, Minutos: {row.Minutos}, RND Llegada: {row.RndLlegada}, Tiempo Llegada: {row.TmpLlegada}, Minutos Llegada: {row.MinLlegada}, " +
+    //                          $"Cola Atencion: {row.ColaAtencion}, RND Tipo: {row.RndTipo}, Tipo: {row.Tipo}, RND Tiempo: {row.RndTiempo}, Tiempo: {row.Tiempo}, Minutos Fin Atencion: {row.MinFinAtencion}, " +
+    //                          $"Cola Reparacion: {row.RelojARepar}, RND Reparacion: {row.RndReparacion}, Tiempo Reparacion: {row.TmpReparacion}, Minutos Fin Reparacion: {row.MinFinRepar}, " +
+    //                          $"Estado Atencion: {row.EstadoAtencion}, Estado Reparacion: {row.EstadoRepar}");
+    //        // Completa el resto de la información que deseas mostrar
+    //    }
+    //}
 
 
     public double ObtenerPNoReparado()
@@ -326,6 +352,15 @@ public class Simulator
         }
             
         else return 0;
+    }
+    public double ObtenerPorcOcupacionAyudante()
+    {
+        return (Math.Round(((tiempoAtencionAyudante / tiempoFinSimulacion) * 100), 2));
+    }
+
+    public double ObtenerPorcOcupacionRelojero()
+    {
+        return (Math.Round(((tiempoAtencionRelojero / tiempoFinSimulacion) * 100), 2));
     }
 }
 
