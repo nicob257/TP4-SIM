@@ -12,6 +12,7 @@ public class Simulator
     private Queue<Reloj> colaRelojes = new Queue<Reloj>();
     private List<Evento> eventos = new List<Evento>();
     private List<StateRow> estados = new List<StateRow>();
+    private StateRow rowAnterior;
     private Random rndClase = new Random();
     private double rndTiempoLlegada;
     private double rndTipoAtencion;
@@ -129,7 +130,7 @@ public class Simulator
 
         estados.Add(CrearStateRow(relojSimulacion, new Evento { Nombre = "Fin Simulación", Tiempo = relojSimulacion },inicio,
             liTiempoLlegCli, lsTiempoLlegCli, liTiempoAtCompra, lsTiempoAtCompra, liTiempoRepReloj, lsTiempoRepReloj));
-        //MostrarEstados();
+        //MostrarEstados();s
         
 
         Console.WriteLine("Cola clientes: " + colaClientes.Count + "|" + "Cola relojes: " + colaRelojes.Count);
@@ -190,6 +191,7 @@ public class Simulator
             colaClientes.Enqueue(cliente);
         }
         rndTiempoLlegada = rndClase.NextDouble();
+        
         double tiempoLlegada = GenerarTiempoLlegadaCliente(liLlegada, lsLlegada, rndTiempoLlegada);
         minutosLlegada = tiempo + tiempoLlegada;
         eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
@@ -319,10 +321,25 @@ public class Simulator
     }
 
     private StateRow CrearStateRow(double tiempo, Evento evento, bool inicio,
-        int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj)
+        int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj
+       )
     {
+        bool generarRnd;
         int retirar = 0;
         int reparar = 0;
+        rndTiempoAtencion = Math.Truncate(rndTiempoAtencion * 10000) / 10000;
+
+
+        if ((rowAnterior != null) && (rowAnterior.RndTiempo == rndTiempoAtencion))
+        {
+            rowAnterior.RndTiempo = Math.Truncate(rowAnterior.RndTiempo * 10000) / 10000;
+            generarRnd = false;
+            
+        } else
+        {
+            generarRnd = true; 
+        }
+       
         foreach (Reloj reloj in colaRelojes)
         {
             if (reloj.Estado == "Listo para retirar")
@@ -344,8 +361,8 @@ public class Simulator
             ColaAtencion = colaClientes.Count,
             RndTipo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTipoAtencion*10000)/10000 : 0,
             Tipo = (evento.Nombre == "Llegada Cliente") ? ultimoCliente.Tipo : "",
-            RndTiempo = ((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente")) ? Math.Truncate(rndTiempoAtencion * 10000) / 10000 : 0,
-            TiempoAt = ((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente")) ? Math.Truncate(tiempoAtencion*10000)/ 10000 : 0,
+            RndTiempo = (generarRnd) ? rndTiempoAtencion : 0,
+            TiempoAt = ((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente")) ? Math.Truncate(ultimoCliente.TiempoAtencion*10000)/ 10000 : 0,
             MinFinAtencion = Math.Truncate(((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente") ? minutosFinAtencion : 0)*10000) / 10000,
             RelojARepar = reparar,
             RelojARetir = retirar,
@@ -360,6 +377,10 @@ public class Simulator
             TiAtRelojero = Math.Round(tiempoAtencionRelojero, 2),
             };
         reparando = false;
+        if (generarRnd)
+        {
+            rowAnterior = row;
+        }
         return row;
     }
 
