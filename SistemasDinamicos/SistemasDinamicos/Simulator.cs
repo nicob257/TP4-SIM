@@ -363,7 +363,7 @@ public class Simulator
             Tipo = (evento.Nombre == "Llegada Cliente") ? ultimoCliente.Tipo : "",
             RndTiempo = (generarRnd) ? rndTiempoAtencion : 0,
             TiempoAt = ((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente")) ? Math.Truncate(ultimoCliente.TiempoAtencion*10000)/ 10000 : 0,
-            MinFinAtencion = Math.Truncate(((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente") ? minutosFinAtencion : 0)*10000) / 10000,
+            MinFinAtencion = Math.Truncate(((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente" || evento.Nombre == "Fin Ordenar LT") ? minutosFinAtencion : 0)*10000) / 10000,
             RelojARepar = reparar,
             RelojARetir = retirar,
             RndReparacion = reparando ? Math.Truncate(rndTiempoReparacion * 10000) / 10000 : 0,
