@@ -16,6 +16,7 @@ namespace RelojeriaSimulacion
 
         private void btnSimular_Click(object sender, EventArgs e)
         {
+            btnSimular.Hide();
             simulator.InicializarSistema();
             dataGridViewResultados.DataSource = null;
             // Ejecutar la simulación

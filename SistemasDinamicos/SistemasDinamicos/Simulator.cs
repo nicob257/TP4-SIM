@@ -47,6 +47,7 @@ public class Simulator
         eventos.Clear();
         estados.Clear();
         colaRelojes.Clear();
+        colaClientes.Clear();
         tiempoAtencionAyudante = 0;
         tiempoAtencionRelojero = 0;
         for (int i = 0; i < 3; i++)
@@ -111,7 +112,7 @@ public class Simulator
 
             iteracion++;
         }
-        tiempoFinSimulacion += relojSimulacion;
+        tiempoFinSimulacion = relojSimulacion;
         if (minutosFinAtencion != 0)
         {
             if (colaClientes.Count != 0) {
@@ -250,6 +251,7 @@ public class Simulator
         {
             Cliente cliente = colaClientes.Dequeue();
             ultimoCliente = cliente;
+            ultimoEstadoAtencion = cliente.Tipo;
             if (cliente.Tipo == "Compra")
             {
                 rndTiempoAtencion = rndClase.NextDouble();
