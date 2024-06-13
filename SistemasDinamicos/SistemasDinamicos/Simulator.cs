@@ -256,7 +256,7 @@ public class Simulator
             {
                 rndTiempoAtencion = rndClase.NextDouble();
                 cliente.TiempoAtencion = GenerarTiempoAtencionCompra(liAt, lsAt, rndTiempoAtencion);
-                //tiempoAtencion += cliente.TiempoAtencion;
+                tiempoAtencion = cliente.TiempoAtencion;
                 
             }
             else
