@@ -16,15 +16,15 @@ namespace RelojeriaSimulacion
 
         private void btnSimular_Click(object sender, EventArgs e)
         {
-            simulator.InicializarSistema();
-            dataGridViewResultados.DataSource = null;
-            // Ejecutar la simulación
-            List<StateRow> estados = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text), Convert.ToInt32(i.Text), Convert.ToInt32(j.Text),
-                Convert.ToDouble(txtProbCompra.Text), Convert.ToDouble(txtProbEntrega.Text), Convert.ToDouble(txtProbRetiro.Text),
-                Convert.ToInt32(txtLiLleg.Text), Convert.ToInt32(txtLsLleg.Text), Convert.ToInt32(txtLiCp.Text), Convert.ToInt32(txtLsCp.Text), Convert.ToInt32(txtLiRep.Text), Convert.ToInt32(txtLsRep.Text));
+            simulator.InicializarProbabilidades(Convert.ToDouble(txtProbCompra.Text), Convert.ToDouble(txtProbEntrega.Text),
+                Convert.ToInt32(txtLiLleg.Text), Convert.ToInt32(txtLsLleg.Text), 
+                Convert.ToInt32(txtLiCp.Text), Convert.ToInt32(txtLsCp.Text), Convert.ToInt32(txtLiRep.Text), 
+                Convert.ToInt32(txtLsRep.Text), Convert.ToInt32(txtTmpOrden.Text));
 
-            // Mostrar resultados en el DataGridView
-            dataGridViewResultados.DataSource = estados;
+            List<object> vectores = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text), 
+                Convert.ToInt32(i.Text), Convert.ToInt32(j.Text));
+                
+            dataGridViewResultados.DataSource = vectores;
             lblPNoReparado.Text = simulator.ObtenerPNoReparado().ToString();
             ocupAy.Text = simulator.ObtenerPorcOcupacionAyudante().ToString();
             ocupRel.Text = simulator.ObtenerPorcOcupacionRelojero().ToString();
@@ -71,6 +71,11 @@ namespace RelojeriaSimulacion
         }
 
         private void i_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label17_Click(object sender, EventArgs e)
         {
 
         }
