@@ -16,6 +16,8 @@ public class StateRow
     public double RndTipo { get; set; }
     public string Tipo { get; set; }
     public double RndTiempo { get; set; }
+    public double RndProfundidadInspeccion { get; set; }
+    public int ProfundidadInspeccion { get; set; }
     public double TiempoAt { get; set; }
     public double MinFinAtencion { get; set; }
     public int RelojARetir { get; set; }
@@ -31,6 +33,8 @@ public class StateRow
     public double TiAtAyudante { get; set; }
 
     public double TiAtRelojero { get; set; }
+
+    
 
 }
 

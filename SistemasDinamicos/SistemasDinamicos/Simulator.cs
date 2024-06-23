@@ -18,9 +18,12 @@ public class Simulator
     private double rndTipoAtencion;
     private double rndTiempoAtencion;
     private double rndTiempoReparacion;
+    private double rndProfundidadInspeccion;
+    private int profundidadInspeccion;
     private double minutosLlegada;
     private double minutosFinAtencion;
     private double minutosFinReparacion;
+    private double minutosFinOrdenar;
     private int cantRetirosNoExitosos;
     private int cantRetiros;
     private bool inicio;
@@ -34,6 +37,7 @@ public class Simulator
     private double tiempoAtencion;
     private Cliente ultimoCliente;
     private string ultimoEstadoAtencion;
+    private List<Tupla> listaRk = new List<Tupla>();
     
     public void InicializarSistema()
     {
@@ -164,12 +168,16 @@ public class Simulator
         else if (rndTipoAtencion <= (pCompra + pEntrega))
         {
             cliente.Tipo = "Entrega";
-            cliente.TiempoAtencion = 3;
+            rndProfundidadInspeccion = rndClase.NextDouble();
+            profundidadInspeccion = (int)Math.Round(uniformGenerator.Generate(0, 100, rndProfundidadInspeccion));
+            cliente.TiempoAtencion = ObtenerTiempoAtencionRK(profundidadInspeccion);
         }
         else
         {
             cliente.Tipo = "Retiro";
-            cliente.TiempoAtencion = 3;
+            rndProfundidadInspeccion = rndClase.NextDouble();
+            profundidadInspeccion = (int)Math.Round(uniformGenerator.Generate(0, 100, rndProfundidadInspeccion));
+            cliente.TiempoAtencion = ObtenerTiempoAtencionRK(profundidadInspeccion);
         }
         Console.WriteLine(colaClientes.Count + " fgsdgadg " + minutosFinAtencion + " sdfgdsg " + tiempo);
         if (colaClientes.Count == 0 && minutosFinAtencion < tiempo)
@@ -195,6 +203,18 @@ public class Simulator
         double tiempoLlegada = GenerarTiempoLlegadaCliente(liLlegada, lsLlegada, rndTiempoLlegada);
         minutosLlegada = tiempo + tiempoLlegada;
         eventos.Add(new Evento { Nombre = "Llegada Cliente", Tiempo = minutosLlegada });
+    }
+
+    private double ObtenerTiempoAtencionRK(int profundidadInspeccion)
+    {
+        for (int i = 0; i < listaRk.Count; i++)
+        {
+            if (listaRk[i].Segundo >= profundidadInspeccion)
+            {
+                return listaRk[i].Primero;
+            }
+        }
+        return 0;
     }
 
     private void ManejarFinAtencionCliente(double tiempo, int liRepReloj, int lsRepReloj, int liAt, int lsAt)
@@ -281,8 +301,61 @@ public class Simulator
                 break;
             }
         }
-        eventos.Add(new Evento { Nombre = "Fin Ordenar LT", Tiempo = tiempo + 5 });
+        
+        minutosFinOrdenar = tiempo + 5;
+        eventos.Add(new Evento { Nombre = "Fin Ordenar LT", Tiempo = minutosFinOrdenar });
         estadoRepar = "Ordenando";
+    }
+
+    public List<RkRow> CalcularRK(int v1, double v2, int v3, double h)
+    {
+        List<RkRow> lista = new List<RkRow>();
+        double insp = 0;
+        double t = 0;
+        double k1 = h * (v1 * Math.Pow((t + v2), 2) + v3);
+        double k2 = h * (v1 * Math.Pow((t + h/2 + v2), 2) + v3);
+        double k3 = h * (v1 * Math.Pow((t + h/2 + v2), 2) + v3);
+        double k4 = h * (v1 * Math.Pow((t + h + v2), 2) + v3);
+        double sigInsp = insp + (1.0/6 * (k1 + 2*k2 + 2*k3 + k4));
+        listaRk.Add(new Tupla(t, insp));
+        lista.Add(new RkRow
+        {
+
+            t = t,
+            I = insp,
+            K1 = k1,
+            K2 = k2,
+            K3 = k3,
+            K4 = k4,
+            Isig = sigInsp,
+        }) ;        
+        for (int i = 0; i < 60; i++)
+        {
+            t += h;
+            insp = sigInsp; 
+            k1 = h * (v1 * Math.Pow((t + v2), 2) + v3);
+            k2 = h * (v1 * Math.Pow((t + h / 2 + v2), 2) + v3);
+            k3 = h * (v1 * Math.Pow((t + h / 2 + v2), 2) + v3);
+            k4 = h * (v1 * Math.Pow((t + h + v2), 2) + v3);
+            sigInsp = insp + (1.0/6 * (k1 + 2 * k2 + 2 * k3 + k4));
+            lista.Add(new RkRow
+            {
+
+                t = t,
+                I = insp,
+                K1 = k1,
+                K2 = k2,
+                K3 = k3,
+                K4 = k4,
+                Isig = sigInsp,
+            });
+            listaRk.Add(new Tupla(t, insp));
+
+        }
+
+        return lista;
+
+       
     }
 
     private void ManejarFinOrdenar(double tiempo, int liRepReloj, int lsRepReloj)
@@ -362,6 +435,8 @@ public class Simulator
             RndTipo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTipoAtencion*10000)/10000 : 0,
             Tipo = (evento.Nombre == "Llegada Cliente") ? ultimoCliente.Tipo : "",
             RndTiempo = (generarRnd) ? rndTiempoAtencion : 0,
+            RndProfundidadInspeccion = rndProfundidadInspeccion,
+            ProfundidadInspeccion = profundidadInspeccion,
             TiempoAt = ((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente")) ? Math.Truncate(ultimoCliente.TiempoAtencion*10000)/ 10000 : 0,
             MinFinAtencion = Math.Truncate(((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente" || evento.Nombre == "Fin Ordenar LT") ? minutosFinAtencion : 0)*10000) / 10000,
             RelojARepar = reparar,
