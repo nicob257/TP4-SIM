@@ -323,11 +323,11 @@ public class Simulator
 
             t = t,
             I = insp,
-            K1 = k1,
-            K2 = k2,
-            K3 = k3,
-            K4 = k4,
-            Isig = sigInsp,
+            K1 = Math.Round(k1, 4),
+            K2 = Math.Round(k2, 4),
+            K3 = Math.Round(k3, 4),
+            K4 = Math.Round(k4, 4),
+            Isig = Math.Round(sigInsp, 1),
         }) ;        
         for (int i = 0; i < 60; i++)
         {
@@ -341,13 +341,13 @@ public class Simulator
             lista.Add(new RkRow
             {
 
-                t = t,
-                I = insp,
-                K1 = k1,
-                K2 = k2,
-                K3 = k3,
-                K4 = k4,
-                Isig = sigInsp,
+                t = Math.Round(t, 1),
+                I = Math.Round(insp, 1),
+                K1 = Math.Round(k1, 4),
+                K2 = Math.Round(k2, 4),
+                K3 = Math.Round(k3, 4),
+                K4 = Math.Round(k4, 4),
+                Isig = Math.Round(sigInsp, 1),
             });
             listaRk.Add(new Tupla(t, insp));
 
@@ -435,7 +435,7 @@ public class Simulator
             RndTipo = evento.Nombre == "Llegada Cliente" ? Math.Truncate(rndTipoAtencion*10000)/10000 : 0,
             Tipo = (evento.Nombre == "Llegada Cliente") ? ultimoCliente.Tipo : "",
             RndTiempo = (generarRnd) ? rndTiempoAtencion : 0,
-            RndProfundidadInspeccion = rndProfundidadInspeccion,
+            RndProfundidadInspeccion = Math.Truncate(rndProfundidadInspeccion * 10000) / 10000,
             ProfundidadInspeccion = profundidadInspeccion,
             TiempoAt = ((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente")) ? Math.Truncate(ultimoCliente.TiempoAtencion*10000)/ 10000 : 0,
             MinFinAtencion = Math.Truncate(((evento.Nombre == "Llegada Cliente" || evento.Nombre == "Fin Atención Cliente" || evento.Nombre == "Fin Ordenar LT") ? minutosFinAtencion : 0)*10000) / 10000,
