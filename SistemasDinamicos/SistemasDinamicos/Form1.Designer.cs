@@ -17,8 +17,8 @@
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnSimular = new System.Windows.Forms.Button();
             this.dataGridViewResultados = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
@@ -54,6 +54,21 @@
             this.ocupAy = new System.Windows.Forms.Label();
             this.ocupRel = new System.Windows.Forms.Label();
             this.dgvRK = new System.Windows.Forms.DataGridView();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txtRk1 = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.txtRk2 = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.txtRk3 = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.txtHRK = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.txtLiInsp = new System.Windows.Forms.TextBox();
+            this.txtLsInsp = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResultados)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRK)).BeginInit();
             this.SuspendLayout();
@@ -72,8 +87,8 @@
             // 
             // dataGridViewResultados
             // 
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewResultados.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewResultados.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridViewResultados.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -83,7 +98,7 @@
             this.dataGridViewResultados.Location = new System.Drawing.Point(15, 177);
             this.dataGridViewResultados.Name = "dataGridViewResultados";
             this.dataGridViewResultados.RowHeadersWidth = 51;
-            this.dataGridViewResultados.Size = new System.Drawing.Size(886, 480);
+            this.dataGridViewResultados.Size = new System.Drawing.Size(950, 480);
             this.dataGridViewResultados.TabIndex = 1;
             this.dataGridViewResultados.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewResultados_CellContentClick);
             // 
@@ -264,7 +279,7 @@
             this.lblPNoReparado.AutoSize = true;
             this.lblPNoReparado.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPNoReparado.ForeColor = System.Drawing.Color.Red;
-            this.lblPNoReparado.Location = new System.Drawing.Point(592, 130);
+            this.lblPNoReparado.Location = new System.Drawing.Point(517, 130);
             this.lblPNoReparado.Name = "lblPNoReparado";
             this.lblPNoReparado.Size = new System.Drawing.Size(15, 16);
             this.lblPNoReparado.TabIndex = 17;
@@ -406,7 +421,7 @@
             // 
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(740, 130);
+            this.label15.Location = new System.Drawing.Point(17, 147);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(141, 16);
             this.label15.TabIndex = 30;
@@ -416,7 +431,7 @@
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(740, 147);
+            this.label16.Location = new System.Drawing.Point(379, 147);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(132, 16);
             this.label16.TabIndex = 31;
@@ -427,7 +442,7 @@
             this.ocupAy.AutoSize = true;
             this.ocupAy.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ocupAy.ForeColor = System.Drawing.Color.Red;
-            this.ocupAy.Location = new System.Drawing.Point(896, 130);
+            this.ocupAy.Location = new System.Drawing.Point(143, 147);
             this.ocupAy.Name = "ocupAy";
             this.ocupAy.Size = new System.Drawing.Size(15, 16);
             this.ocupAy.TabIndex = 32;
@@ -438,7 +453,7 @@
             this.ocupRel.AutoSize = true;
             this.ocupRel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ocupRel.ForeColor = System.Drawing.Color.Red;
-            this.ocupRel.Location = new System.Drawing.Point(896, 147);
+            this.ocupRel.Location = new System.Drawing.Point(496, 147);
             this.ocupRel.Name = "ocupRel";
             this.ocupRel.Size = new System.Drawing.Size(15, 16);
             this.ocupRel.TabIndex = 33;
@@ -446,25 +461,191 @@
             // 
             // dgvRK
             // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvRK.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvRK.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
             this.dgvRK.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvRK.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvRK.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
             this.dgvRK.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRK.Location = new System.Drawing.Point(946, 177);
+            this.dgvRK.Location = new System.Drawing.Point(982, 177);
             this.dgvRK.Name = "dgvRK";
             this.dgvRK.RowHeadersWidth = 51;
-            this.dgvRK.Size = new System.Drawing.Size(424, 480);
+            this.dgvRK.Size = new System.Drawing.Size(388, 480);
             this.dgvRK.TabIndex = 34;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.label17.Location = new System.Drawing.Point(632, 128);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(152, 16);
+            this.label17.TabIndex = 35;
+            this.label17.Text = "Función Runge Kutta:";
+            // 
+            // txtRk1
+            // 
+            this.txtRk1.Location = new System.Drawing.Point(801, 128);
+            this.txtRk1.Name = "txtRk1";
+            this.txtRk1.Size = new System.Drawing.Size(22, 22);
+            this.txtRk1.TabIndex = 36;
+            this.txtRk1.Text = "3";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label18.ForeColor = System.Drawing.Color.Red;
+            this.label18.Location = new System.Drawing.Point(814, 128);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(40, 20);
+            this.label18.TabIndex = 37;
+            this.label18.Text = "(t + ";
+            // 
+            // txtRk2
+            // 
+            this.txtRk2.Location = new System.Drawing.Point(849, 128);
+            this.txtRk2.Name = "txtRk2";
+            this.txtRk2.Size = new System.Drawing.Size(30, 22);
+            this.txtRk2.TabIndex = 38;
+            this.txtRk2.Text = "0,5";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label19.ForeColor = System.Drawing.Color.Red;
+            this.label19.Location = new System.Drawing.Point(885, 128);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(15, 20);
+            this.label19.TabIndex = 39;
+            this.label19.Text = ")";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
+            this.label20.ForeColor = System.Drawing.Color.Red;
+            this.label20.Location = new System.Drawing.Point(897, 124);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(14, 15);
+            this.label20.TabIndex = 40;
+            this.label20.Text = "2";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label21.ForeColor = System.Drawing.Color.Red;
+            this.label21.Location = new System.Drawing.Point(917, 128);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(24, 20);
+            this.label21.TabIndex = 41;
+            this.label21.Text = "+ ";
+            // 
+            // txtRk3
+            // 
+            this.txtRk3.Location = new System.Drawing.Point(954, 128);
+            this.txtRk3.Name = "txtRk3";
+            this.txtRk3.Size = new System.Drawing.Size(22, 22);
+            this.txtRk3.TabIndex = 42;
+            this.txtRk3.Text = "2";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.label22.Location = new System.Drawing.Point(1047, 130);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(222, 16);
+            this.label22.TabIndex = 43;
+            this.label22.Text = "Distribución Prof. Inspección (I)";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label24.ForeColor = System.Drawing.Color.Green;
+            this.label24.Location = new System.Drawing.Point(708, 151);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(19, 16);
+            this.label24.TabIndex = 45;
+            this.label24.Text = "h:";
+            // 
+            // txtHRK
+            // 
+            this.txtHRK.Location = new System.Drawing.Point(733, 149);
+            this.txtHRK.Name = "txtHRK";
+            this.txtHRK.Size = new System.Drawing.Size(30, 22);
+            this.txtHRK.TabIndex = 46;
+            this.txtHRK.Text = "0,1";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.BackColor = System.Drawing.Color.DarkBlue;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label23.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label23.Location = new System.Drawing.Point(1047, 148);
+            this.label23.Name = "label23";
+            this.label23.Padding = new System.Windows.Forms.Padding(3);
+            this.label23.Size = new System.Drawing.Size(25, 24);
+            this.label23.TabIndex = 47;
+            this.label23.Text = "LI";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.BackColor = System.Drawing.Color.DarkBlue;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label25.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label25.Location = new System.Drawing.Point(1165, 149);
+            this.label25.Name = "label25";
+            this.label25.Padding = new System.Windows.Forms.Padding(3);
+            this.label25.Size = new System.Drawing.Size(32, 24);
+            this.label25.TabIndex = 48;
+            this.label25.Text = "LS";
+            // 
+            // txtLiInsp
+            // 
+            this.txtLiInsp.Location = new System.Drawing.Point(1078, 150);
+            this.txtLiInsp.Name = "txtLiInsp";
+            this.txtLiInsp.Size = new System.Drawing.Size(69, 22);
+            this.txtLiInsp.TabIndex = 49;
+            this.txtLiInsp.Text = "0";
+            // 
+            // txtLsInsp
+            // 
+            this.txtLsInsp.Location = new System.Drawing.Point(1200, 150);
+            this.txtLsInsp.Name = "txtLsInsp";
+            this.txtLsInsp.Size = new System.Drawing.Size(69, 22);
+            this.txtLsInsp.TabIndex = 50;
+            this.txtLsInsp.Text = "100";
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.BackColor = System.Drawing.Color.PaleTurquoise;
             this.ClientSize = new System.Drawing.Size(1382, 669);
+            this.Controls.Add(this.txtLsInsp);
+            this.Controls.Add(this.txtLiInsp);
+            this.Controls.Add(this.label25);
+            this.Controls.Add(this.label23);
+            this.Controls.Add(this.txtHRK);
+            this.Controls.Add(this.label24);
+            this.Controls.Add(this.label22);
+            this.Controls.Add(this.txtRk3);
+            this.Controls.Add(this.label21);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.txtRk2);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.txtRk1);
+            this.Controls.Add(this.label17);
             this.Controls.Add(this.dgvRK);
             this.Controls.Add(this.ocupRel);
             this.Controls.Add(this.ocupAy);
@@ -548,5 +729,20 @@
         private System.Windows.Forms.Label ocupAy;
         private System.Windows.Forms.Label ocupRel;
         private System.Windows.Forms.DataGridView dgvRK;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox txtRk1;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox txtRk2;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.TextBox txtRk3;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.TextBox txtHRK;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TextBox txtLiInsp;
+        private System.Windows.Forms.TextBox txtLsInsp;
     }
 }

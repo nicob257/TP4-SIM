@@ -67,7 +67,7 @@ public class Simulator
 
     public List<StateRow> Simular(int tiempoSimulacion, int numIteraciones, int i, int j, 
         double pCompra, double pEntrega, double pRetiro, 
-        int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj)
+        int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj, int liProfInsp, int lsProfInsp)
     {
         double relojSimulacion = 0;
         int iteracion = 0;
@@ -88,7 +88,7 @@ public class Simulator
                     ManejarInicio(relojSimulacion, liTiempoLlegCli, lsTiempoLlegCli);
                     break;
                 case "Llegada Cliente":
-                    ManejarLlegadaCliente(relojSimulacion, pCompra, pEntrega, pRetiro, liTiempoLlegCli, lsTiempoLlegCli, liTiempoAtCompra, lsTiempoAtCompra);
+                    ManejarLlegadaCliente(relojSimulacion, pCompra, pEntrega, pRetiro, liTiempoLlegCli, lsTiempoLlegCli, liTiempoAtCompra, lsTiempoAtCompra, liProfInsp, lsProfInsp);
                     inicio = false;
                     break;
                 case "Fin Atención Cliente":
@@ -152,7 +152,7 @@ public class Simulator
     }
 
     private void ManejarLlegadaCliente(double tiempo, double pCompra, double pEntrega, double pRetiro, 
-        int liLlegada, int lsLlegada, int liAtCompra, int lsAtCompra)
+        int liLlegada, int lsLlegada, int liAtCompra, int lsAtCompra, int liProfInsp, int lsProfInsp)
     {
         Cliente cliente = new Cliente();
         ultimoCliente = cliente;
@@ -169,14 +169,14 @@ public class Simulator
         {
             cliente.Tipo = "Entrega";
             rndProfundidadInspeccion = rndClase.NextDouble();
-            profundidadInspeccion = (int)Math.Round(uniformGenerator.Generate(0, 100, rndProfundidadInspeccion));
+            profundidadInspeccion = (int)Math.Round(uniformGenerator.Generate(liProfInsp, lsProfInsp, rndProfundidadInspeccion));
             cliente.TiempoAtencion = ObtenerTiempoAtencionRK(profundidadInspeccion);
         }
         else
         {
             cliente.Tipo = "Retiro";
             rndProfundidadInspeccion = rndClase.NextDouble();
-            profundidadInspeccion = (int)Math.Round(uniformGenerator.Generate(0, 100, rndProfundidadInspeccion));
+            profundidadInspeccion = (int)Math.Round(uniformGenerator.Generate(liProfInsp, lsProfInsp, rndProfundidadInspeccion));
             cliente.TiempoAtencion = ObtenerTiempoAtencionRK(profundidadInspeccion);
         }
         Console.WriteLine(colaClientes.Count + " fgsdgadg " + minutosFinAtencion + " sdfgdsg " + tiempo);
