@@ -90,7 +90,10 @@ public class Simulator
             rowActual.EstadoAtencion = "Atendiendo";
         }
         else
-        { rowActual.ColaAtencion++; }
+        { 
+            rowActual.ColaAtencion++;
+            rowActual.RndTipo = rowActual.RndTiempo = rowActual.TiempoAt = 0;
+        }
 
         rowActual.Evento = "Llegada";
         GenerarLlegada();
@@ -122,6 +125,7 @@ public class Simulator
     private void ManejarFinAtencion()
     {
         rowActual.Evento = "Fin Atención";
+        rowActual.RndLlegada = rowActual.TmpLlegada = 0; 
         if (rowActual.Tipo == "Entrega")
         {
             if (rowActual.EstadoRepar == "Libre")
@@ -156,8 +160,10 @@ public class Simulator
         {
             rowActual.EstadoAtencion = "Libre";
             rowActual.MinFinAtencion = 0;
+            rowActual.Tipo = "";
+            rowActual.RndTipo = 0;
         }
-        rowActual.Tipo = "";
+        
     }
 
     private void GenerarReparacion()
@@ -169,6 +175,7 @@ public class Simulator
 
     private void ManejarFinReparacion()
     {
+        rowActual.RndTipo = rowActual.RndTiempo = rowActual.TiempoAt = rowActual.RndLlegada = rowActual.TmpLlegada = 0;
         rowActual.MinFinRepar = 0;
         rowActual.Evento = "Fin Reparación";
         rowActual.ColaRetir += 1;
@@ -183,12 +190,14 @@ public class Simulator
 
     private void ManejarFinOrdenar()
     {
+        rowActual.RndTipo = rowActual.RndTiempo = rowActual.TiempoAt = rowActual.RndLlegada = rowActual.TmpLlegada = 0;
         rowActual.MinFinOrden = 0;
         rowActual.Evento = "Fin Ordenar";
         if (rowActual.ColaRepar > 0)
         {
             rowActual.ColaRepar -= 1;
             GenerarReparacion();
+            rowActual.EstadoRepar = "Reparando";
         }
         else
         {
