@@ -4,6 +4,8 @@ using RandomVarGenerator;
 
 public class Simulator
 {
+    
+
     private UniformGenerator uniformGenerator = new UniformGenerator();
     private StateRow rowActual;
     private Random rndClase = new Random();
@@ -18,6 +20,7 @@ public class Simulator
     private int liProfInsp;
     private int lsProfInsp;
     private int tmpOrden;
+    
     private List<Tupla> listaRk = new List<Tupla>();
 
     public void InicializarProbabilidades(double pCompra, double pEntrega, int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, 
@@ -58,8 +61,19 @@ public class Simulator
             {
                 vectores.Add(AgregarRow());
             }
+
             Evento eventoActual = rowActual.EncontrarMenorTiempo();
+
+            // Porcentaje ocupación, aprovechamos que "eventoActual" va a tener el siguiente tiempo y como no se actualizó rowActual
+            // todavía, entonces rowActual tiene el tiempo anterior
+            //--------------------
+            rowActual.TiAtAyudante = (rowActual.EstadoAtencion == "Atendiendo") ? rowActual.TiAtAyudante + (eventoActual.Tiempo - rowActual.Minutos) : rowActual.TiAtAyudante;
+            rowActual.TiAtRelojero = (rowActual.EstadoRepar == "Reparando") ? rowActual.TiAtRelojero + (eventoActual.Tiempo - rowActual.Minutos) : rowActual.TiAtRelojero;
+            //--------------------
+
+            
             rowActual.Minutos = eventoActual.Tiempo;
+            
             switch (eventoActual.Nombre)
             {
                 case "Llegada":
@@ -250,12 +264,12 @@ public class Simulator
     }
     public double ObtenerPorcOcupacionAyudante()
     {
-        return 1.0;
+        return Math.Round((rowActual.TiAtAyudante/rowActual.Minutos) * 100, 2);
     }
 
     public double ObtenerPorcOcupacionRelojero()
     {
-        return 1.0;
+        return Math.Round((rowActual.TiAtRelojero/rowActual.Minutos) * 100, 2);
     }
 
 
