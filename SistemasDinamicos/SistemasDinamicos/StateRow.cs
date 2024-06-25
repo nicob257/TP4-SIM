@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 public class StateRow
 {
@@ -35,7 +36,25 @@ public class StateRow
     public List<Reloj> Relojes { get; set; }
     public object Clone()
     {
-        return MemberwiseClone();
+        StateRow rowAClonar = this;
+        rowAClonar.Minutos = (rowAClonar.Minutos != 0 ? Math.Round(rowAClonar.Minutos, 4) : rowAClonar.Minutos);
+        rowAClonar.RndLlegada = (rowAClonar.RndLlegada != 0 ? Math.Round(rowAClonar.RndLlegada, 4) : rowAClonar.RndLlegada);
+        rowAClonar.TmpLlegada = (rowAClonar.TmpLlegada != 0 ? Math.Round(rowAClonar.TmpLlegada, 4) : rowAClonar.TmpLlegada);
+        rowAClonar.MinLlegada = (rowAClonar.MinLlegada != 0 ? Math.Round(rowAClonar.MinLlegada, 4) : rowAClonar.MinLlegada);
+        rowAClonar.RndTiempo = (rowAClonar.RndTiempo != 0 ? Math.Round(rowAClonar.RndTiempo, 4) : rowAClonar.RndTiempo);
+        rowAClonar.RndTipo = (rowAClonar.RndTipo != 0 ? Math.Round(rowAClonar.RndTipo, 4) : rowAClonar.RndTipo);
+        rowAClonar.RndProfundidadInspeccion = (rowAClonar.RndProfundidadInspeccion != 0 ? Math.Round(rowAClonar.RndProfundidadInspeccion, 4) : rowAClonar.RndProfundidadInspeccion);
+        rowAClonar.TiempoAt = (rowAClonar.TiempoAt != 0 ? Math.Round(rowAClonar.TiempoAt, 4) : rowAClonar.TiempoAt);
+        rowAClonar.MinFinAtencion = (rowAClonar.MinFinAtencion != 0 ? Math.Round(rowAClonar.MinFinAtencion, 4) : rowAClonar.MinFinAtencion);
+        rowAClonar.RndReparacion = (rowAClonar.RndReparacion != 0 ? Math.Round(rowAClonar.RndReparacion, 4) : rowAClonar.RndReparacion);
+        rowAClonar.TmpReparacion = (rowAClonar.TmpReparacion != 0 ? Math.Round(rowAClonar.TmpReparacion, 4) : rowAClonar.TmpReparacion);
+        rowAClonar.MinFinRepar = (rowAClonar.MinFinRepar != 0 ? Math.Round(rowAClonar.MinFinRepar, 4) : rowAClonar.MinFinRepar);
+        rowAClonar.MinFinOrden = (rowAClonar.MinFinOrden != 0 ? Math.Round(rowAClonar.MinFinOrden, 4) : rowAClonar.MinFinOrden);
+        rowAClonar.TiAtAyudante = (rowAClonar.TiAtAyudante != 0 ? Math.Round(rowAClonar.TiAtAyudante, 4) : rowAClonar.TiAtAyudante);
+        rowAClonar.TiAtRelojero = (rowAClonar.TiAtRelojero != 0 ? Math.Round(rowAClonar.TiAtRelojero, 4) : rowAClonar.TiAtRelojero);
+
+
+        return rowAClonar.MemberwiseClone();
     }
     public Evento EncontrarMenorTiempo()
     {
