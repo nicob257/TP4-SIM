@@ -1,11 +1,9 @@
-﻿using System;
+﻿using RandomVarGenerator;
 using System.Collections.Generic;
-using RandomVarGenerator;
+using System;
 
 public class Simulator
 {
-    
-
     private UniformGenerator uniformGenerator = new UniformGenerator();
     private StateRow rowActual;
     private Random rndClase = new Random();
@@ -20,10 +18,10 @@ public class Simulator
     private int liProfInsp;
     private int lsProfInsp;
     private int tmpOrden;
-    
+
     private List<Tupla> listaRk = new List<Tupla>();
 
-    public void InicializarProbabilidades(double pCompra, double pEntrega, int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, 
+    public void InicializarProbabilidades(double pCompra, double pEntrega, int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra,
         int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj, int tmpOrden, int liProfInsp, int lsProfInsp)
     {
         this.pCompra = pCompra;
@@ -38,6 +36,7 @@ public class Simulator
         this.liProfInsp = liProfInsp;
         this.lsProfInsp = lsProfInsp;
     }
+
     private void InicializarSistema()
     {
         rowActual = new StateRow();
@@ -54,26 +53,20 @@ public class Simulator
         InicializarSistema();
         int iteracion = 0;
         List<object> vectores = new List<object>();
-       
+        if (iteracion >= j && iteracion < j + i)
+        {
+            vectores.Add(AgregarRow());
+        }
+
         while (rowActual.Minutos < tiempoSimulacion && iteracion < numIteraciones)
         {
-            if (iteracion >= j && iteracion < j + i)
-            {
-                vectores.Add(AgregarRow());
-            }
-
             Evento eventoActual = rowActual.EncontrarMenorTiempo();
 
-            // Porcentaje ocupación, aprovechamos que "eventoActual" va a tener el siguiente tiempo y como no se actualizó rowActual
-            // todavía, entonces rowActual tiene el tiempo anterior
-            //--------------------
             rowActual.TiAtAyudante = (rowActual.EstadoAtencion == "Atendiendo") ? rowActual.TiAtAyudante + (eventoActual.Tiempo - rowActual.Minutos) : rowActual.TiAtAyudante;
             rowActual.TiAtRelojero = (rowActual.EstadoRepar == "Reparando") ? rowActual.TiAtRelojero + (eventoActual.Tiempo - rowActual.Minutos) : rowActual.TiAtRelojero;
-            //--------------------
 
-            
             rowActual.Minutos = eventoActual.Tiempo;
-            
+
             switch (eventoActual.Nombre)
             {
                 case "Llegada":
@@ -90,17 +83,25 @@ public class Simulator
                     break;
             }
 
+
             iteracion++;
+
+            if (iteracion >= j && iteracion < j + i)
+            {
+                vectores.Add(AgregarRow());
+            }
         }
 
         return vectores;
     }
+
     private void GenerarLlegada()
     {
         rowActual.RndLlegada = rndClase.NextDouble();
         rowActual.TmpLlegada = GenerarTiempoLlegadaCliente(rowActual.RndLlegada);
         rowActual.MinLlegada = rowActual.Minutos + rowActual.TmpLlegada;
     }
+
     private void ManejarLlegada()
     {
         if (rowActual.EstadoAtencion == "Libre")
@@ -109,7 +110,7 @@ public class Simulator
             rowActual.EstadoAtencion = "Atendiendo";
         }
         else
-        { 
+        {
             rowActual.ColaAtencion++;
             rowActual.RndTipo = rowActual.RndTiempo = rowActual.TiempoAt = 0;
         }
@@ -118,6 +119,7 @@ public class Simulator
         rowActual.Evento = "Llegada";
         GenerarLlegada();
     }
+
     private void GenerarTipoCliente()
     {
         rowActual.RndTiempo = 0;
@@ -133,14 +135,14 @@ public class Simulator
         {
             rowActual.Tipo = "Entrega";
             rowActual.RndProfundidadInspeccion = rndClase.NextDouble();
-            rowActual.ProfundidadInspeccion = (int)Math.Truncate(uniformGenerator.Generate(liProfInsp, lsProfInsp+1, rowActual.RndProfundidadInspeccion));
+            rowActual.ProfundidadInspeccion = (int)Math.Truncate(uniformGenerator.Generate(liProfInsp, lsProfInsp + 1, rowActual.RndProfundidadInspeccion));
             rowActual.TiempoAt = ObtenerTiempoAtencionRK(rowActual.ProfundidadInspeccion);
         }
         else
         {
             rowActual.Tipo = "Retiro";
             rowActual.RndProfundidadInspeccion = rndClase.NextDouble();
-            rowActual.ProfundidadInspeccion = (int)Math.Truncate(uniformGenerator.Generate(liProfInsp, lsProfInsp+1, rowActual.RndProfundidadInspeccion));
+            rowActual.ProfundidadInspeccion = (int)Math.Truncate(uniformGenerator.Generate(liProfInsp, lsProfInsp + 1, rowActual.RndProfundidadInspeccion));
             rowActual.TiempoAt = ObtenerTiempoAtencionRK(rowActual.ProfundidadInspeccion);
         }
         rowActual.MinFinAtencion = rowActual.Minutos + rowActual.TiempoAt;
@@ -149,7 +151,7 @@ public class Simulator
     private void ManejarFinAtencion()
     {
         rowActual.Evento = "Fin Atención";
-        rowActual.RndLlegada = rowActual.TmpLlegada = 0; 
+        rowActual.RndLlegada = rowActual.TmpLlegada = 0;
         if (rowActual.Tipo == "Entrega")
         {
             if (rowActual.EstadoRepar == "Libre")
@@ -159,7 +161,7 @@ public class Simulator
             }
             else
             {
-                rowActual.ColaRepar += 1 ;
+                rowActual.ColaRepar += 1;
             }
         }
         else if (rowActual.Tipo == "Retiro")
@@ -185,10 +187,9 @@ public class Simulator
             rowActual.EstadoAtencion = "Libre";
             rowActual.MinFinAtencion = 0;
             rowActual.Tipo = "";
-            rowActual.RndTipo = rowActual.RndProfundidadInspeccion = rowActual.ProfundidadInspeccion =  0;
+            rowActual.RndTipo = rowActual.RndProfundidadInspeccion = rowActual.ProfundidadInspeccion = 0;
             rowActual.TiempoAt = rowActual.RndTiempo = 0;
         }
-        
     }
 
     private void GenerarReparacion()
@@ -196,7 +197,7 @@ public class Simulator
         rowActual.RndReparacion = rndClase.NextDouble();
         rowActual.TmpReparacion = GenerarTiempoReparacionReloj(rowActual.RndReparacion);
         rowActual.MinFinRepar = rowActual.Minutos + rowActual.TmpReparacion;
-    }  
+    }
 
     private void ManejarFinReparacion()
     {
@@ -248,10 +249,8 @@ public class Simulator
     private object AgregarRow()
     {
         var rowMostrar = rowActual.Clone();
-
         return rowMostrar;
     }
-
 
     public double ObtenerPNoReparado()
     {
@@ -259,19 +258,18 @@ public class Simulator
         {
             return Math.Round(((double)rowActual.RetFrac / (double)rowActual.CantReti), 4);
         }
-            
         else return 0;
     }
+
     public double ObtenerPorcOcupacionAyudante()
     {
-        return Math.Round((rowActual.TiAtAyudante/rowActual.Minutos) * 100, 2);
+        return Math.Round((rowActual.TiAtAyudante / rowActual.Minutos) * 100, 2);
     }
 
     public double ObtenerPorcOcupacionRelojero()
     {
-        return Math.Round((rowActual.TiAtRelojero/rowActual.Minutos) * 100, 2);
+        return Math.Round((rowActual.TiAtRelojero / rowActual.Minutos) * 100, 2);
     }
-
 
     public List<RkRow> CalcularRK(int v1, double v2, int v3, double h, int lsInsp)
     {
@@ -286,7 +284,6 @@ public class Simulator
         listaRk.Add(new Tupla(t, insp));
         lista.Add(new RkRow
         {
-
             t = t,
             I = insp,
             K1 = Math.Round(k1, 4),
@@ -306,7 +303,6 @@ public class Simulator
             sigInsp = insp + (1.0 / 6 * (k1 + 2 * k2 + 2 * k3 + k4));
             lista.Add(new RkRow
             {
-
                 t = Math.Round(t, 1),
                 I = Math.Round(insp, 1),
                 K1 = Math.Round(k1, 4),
@@ -316,12 +312,8 @@ public class Simulator
                 Isig = Math.Round(sigInsp, 1),
             });
             listaRk.Add(new Tupla(t, insp));
-
         }
-
         return lista;
-
-
     }
 
     private double ObtenerTiempoAtencionRK(int profundidadInspeccion)
@@ -336,5 +328,3 @@ public class Simulator
         return 0;
     }
 }
-
-
