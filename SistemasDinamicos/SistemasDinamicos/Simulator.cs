@@ -273,7 +273,7 @@ public class Simulator
     }
 
 
-    public List<RkRow> CalcularRK(int v1, double v2, int v3, double h)
+    public List<RkRow> CalcularRK(int v1, double v2, int v3, double h, int lsInsp)
     {
         List<RkRow> lista = new List<RkRow>();
         double insp = 0;
@@ -295,7 +295,7 @@ public class Simulator
             K4 = Math.Round(k4, 4),
             Isig = Math.Round(sigInsp, 1),
         });
-        for (int i = 0; i < 60; i++)
+        while (insp < lsInsp)
         {
             t += h;
             insp = sigInsp;
