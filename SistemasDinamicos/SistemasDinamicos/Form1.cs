@@ -83,5 +83,10 @@ namespace RelojeriaSimulacion
         {
 
         }
+
+        private void txtProbCompra_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

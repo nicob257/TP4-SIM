@@ -58,8 +58,10 @@ public class Simulator
             vectores.Add(AgregarRow());
         }
 
+
         while (rowActual.Minutos < tiempoSimulacion && iteracion < numIteraciones)
         {
+
             Evento eventoActual = rowActual.EncontrarMenorTiempo();
 
             rowActual.TiAtAyudante = (rowActual.EstadoAtencion == "Atendiendo") ? rowActual.TiAtAyudante + (eventoActual.Tiempo - rowActual.Minutos) : rowActual.TiAtAyudante;
@@ -67,29 +69,41 @@ public class Simulator
 
             rowActual.Minutos = eventoActual.Tiempo;
 
-            switch (eventoActual.Nombre)
+            if(rowActual.Minutos < tiempoSimulacion)
             {
-                case "Llegada":
-                    ManejarLlegada();
-                    break;
-                case "Fin Atención":
-                    ManejarFinAtencion();
-                    break;
-                case "Fin Reparación":
-                    ManejarFinReparacion();
-                    break;
-                case "Fin Orden":
-                    ManejarFinOrdenar();
-                    break;
+                switch (eventoActual.Nombre)
+                {
+                    case "Llegada":
+                        ManejarLlegada();
+                        break;
+                    case "Fin Atención":
+                        ManejarFinAtencion();
+                        break;
+                    case "Fin Reparación":
+                        ManejarFinReparacion();
+                        break;
+                    case "Fin Orden":
+                        ManejarFinOrdenar();
+                        break;
+                }
+
+                if (iteracion >= j && iteracion < j + i)
+                {
+                    vectores.Add(AgregarRow());
+                }
+
             }
-
-
             iteracion++;
 
-            if (iteracion >= j && iteracion < j + i)
-            {
-                vectores.Add(AgregarRow());
-            }
+        }
+
+        if (rowActual.Minutos > tiempoSimulacion)
+        {
+            rowActual.Evento = "Fin Simulación";
+            rowActual.Minutos = tiempoSimulacion;
+            rowActual.RndTipo = rowActual.RndTiempo = rowActual.TiempoAt = rowActual.RndLlegada = rowActual.TmpLlegada = 0;
+            rowActual.MinFinOrden = rowActual.RndReparacion = rowActual.TmpReparacion = 0;
+            vectores.Add(AgregarRow());
         }
 
         return vectores;
@@ -174,6 +188,7 @@ public class Simulator
             else
             {
                 rowActual.RetFrac += 1;
+                rowActual.CantReti += 1;
             }
         }
 
