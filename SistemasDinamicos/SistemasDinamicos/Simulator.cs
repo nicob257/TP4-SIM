@@ -15,10 +15,13 @@ public class Simulator
     private int lsTiempoAtCompra;
     private int liTiempoRepReloj;
     private int lsTiempoRepReloj;
+    private int liProfInsp;
+    private int lsProfInsp;
     private int tmpOrden;
+    private List<Tupla> listaRk = new List<Tupla>();
 
     public void InicializarProbabilidades(double pCompra, double pEntrega, int liTiempoLlegCli, int lsTiempoLlegCli, int liTiempoAtCompra, 
-        int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj, int tmpOrden)
+        int lsTiempoAtCompra, int liTiempoRepReloj, int lsTiempoRepReloj, int tmpOrden, int liProfInsp, int lsProfInsp)
     {
         this.pCompra = pCompra;
         this.pEntrega = pEntrega;
@@ -29,6 +32,8 @@ public class Simulator
         this.liTiempoRepReloj = liTiempoRepReloj;
         this.lsTiempoRepReloj = lsTiempoRepReloj;
         this.tmpOrden = tmpOrden;
+        this.liProfInsp = liProfInsp;
+        this.lsProfInsp = lsProfInsp;
     }
     private void InicializarSistema()
     {
@@ -94,6 +99,7 @@ public class Simulator
             rowActual.ColaAtencion++;
             rowActual.RndTipo = rowActual.RndTiempo = rowActual.TiempoAt = 0;
         }
+        rowActual.RndReparacion = rowActual.TmpReparacion = 0;
 
         rowActual.Evento = "Llegada";
         GenerarLlegada();
@@ -112,12 +118,16 @@ public class Simulator
         else if (rowActual.RndTipo <= (pCompra + pEntrega))
         {
             rowActual.Tipo = "Entrega";
-            rowActual.TiempoAt = 3;
+            rowActual.RndProfundidadInspeccion = rndClase.NextDouble();
+            rowActual.ProfundidadInspeccion = (int)Math.Truncate(uniformGenerator.Generate(liProfInsp, lsProfInsp+1, rowActual.RndProfundidadInspeccion));
+            rowActual.TiempoAt = ObtenerTiempoAtencionRK(rowActual.ProfundidadInspeccion);
         }
         else
         {
             rowActual.Tipo = "Retiro";
-            rowActual.TiempoAt = 3;
+            rowActual.RndProfundidadInspeccion = rndClase.NextDouble();
+            rowActual.ProfundidadInspeccion = (int)Math.Truncate(uniformGenerator.Generate(liProfInsp, lsProfInsp+1, rowActual.RndProfundidadInspeccion));
+            rowActual.TiempoAt = ObtenerTiempoAtencionRK(rowActual.ProfundidadInspeccion);
         }
         rowActual.MinFinAtencion = rowActual.Minutos + rowActual.TiempoAt;
     }
@@ -161,7 +171,8 @@ public class Simulator
             rowActual.EstadoAtencion = "Libre";
             rowActual.MinFinAtencion = 0;
             rowActual.Tipo = "";
-            rowActual.RndTipo = 0;
+            rowActual.RndTipo = rowActual.RndProfundidadInspeccion = rowActual.ProfundidadInspeccion =  0;
+            rowActual.TiempoAt = rowActual.RndTiempo = 0;
         }
         
     }
@@ -245,6 +256,70 @@ public class Simulator
     public double ObtenerPorcOcupacionRelojero()
     {
         return 1.0;
+    }
+
+
+    public List<RkRow> CalcularRK(int v1, double v2, int v3, double h)
+    {
+        List<RkRow> lista = new List<RkRow>();
+        double insp = 0;
+        double t = 0;
+        double k1 = h * (v1 * Math.Pow((t + v2), 2) + v3);
+        double k2 = h * (v1 * Math.Pow((t + h / 2 + v2), 2) + v3);
+        double k3 = h * (v1 * Math.Pow((t + h / 2 + v2), 2) + v3);
+        double k4 = h * (v1 * Math.Pow((t + h + v2), 2) + v3);
+        double sigInsp = insp + (1.0 / 6 * (k1 + 2 * k2 + 2 * k3 + k4));
+        listaRk.Add(new Tupla(t, insp));
+        lista.Add(new RkRow
+        {
+
+            t = t,
+            I = insp,
+            K1 = Math.Round(k1, 4),
+            K2 = Math.Round(k2, 4),
+            K3 = Math.Round(k3, 4),
+            K4 = Math.Round(k4, 4),
+            Isig = Math.Round(sigInsp, 1),
+        });
+        for (int i = 0; i < 60; i++)
+        {
+            t += h;
+            insp = sigInsp;
+            k1 = h * (v1 * Math.Pow((t + v2), 2) + v3);
+            k2 = h * (v1 * Math.Pow((t + h / 2 + v2), 2) + v3);
+            k3 = h * (v1 * Math.Pow((t + h / 2 + v2), 2) + v3);
+            k4 = h * (v1 * Math.Pow((t + h + v2), 2) + v3);
+            sigInsp = insp + (1.0 / 6 * (k1 + 2 * k2 + 2 * k3 + k4));
+            lista.Add(new RkRow
+            {
+
+                t = Math.Round(t, 1),
+                I = Math.Round(insp, 1),
+                K1 = Math.Round(k1, 4),
+                K2 = Math.Round(k2, 4),
+                K3 = Math.Round(k3, 4),
+                K4 = Math.Round(k4, 4),
+                Isig = Math.Round(sigInsp, 1),
+            });
+            listaRk.Add(new Tupla(t, insp));
+
+        }
+
+        return lista;
+
+
+    }
+
+    private double ObtenerTiempoAtencionRK(int profundidadInspeccion)
+    {
+        for (int i = 0; i < listaRk.Count; i++)
+        {
+            if (listaRk[i].Segundo >= profundidadInspeccion)
+            {
+                return listaRk[i].Primero;
+            }
+        }
+        return 0;
     }
 }
 

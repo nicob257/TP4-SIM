@@ -58,8 +58,10 @@
     <Compile Include="Reloj.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RkRow.cs" />
     <Compile Include="Simulator.cs" />
     <Compile Include="StateRow.cs" />
+    <Compile Include="Tupla.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
