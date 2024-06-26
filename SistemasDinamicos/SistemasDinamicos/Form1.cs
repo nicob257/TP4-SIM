@@ -40,7 +40,7 @@ namespace RelojeriaSimulacion
                 Convert.ToInt32(txtRk1.Text) >= 0 &&
                 Convert.ToDouble(txtRk2.Text) >= 0 &&
                 Convert.ToInt32(txtRk3.Text) >= 0 &&
-                Convert.ToDouble(txtHRK.Text) >= 0 &&
+                Convert.ToDouble(txtHRK.Text, CultureInfo.InvariantCulture) >= 0 &&
                 Convert.ToInt32(tiempo.Text) >= 0 &&
                 Convert.ToInt32(iteraciones.Text) >= 0 &&
                 Convert.ToInt32(i.Text) >= 0 &&
@@ -54,7 +54,7 @@ namespace RelojeriaSimulacion
                     Convert.ToInt32(txtLiInsp.Text), Convert.ToInt32(txtLsInsp.Text));
 
 
-                    List<RkRow> tablaRk = simulator.CalcularRK(Convert.ToInt32(txtRk1.Text), Convert.ToDouble(txtRk2.Text), Convert.ToInt32(txtRk3.Text), Convert.ToDouble(txtHRK.Text), Convert.ToInt32(txtLsInsp.Text));
+                    List<RkRow> tablaRk = simulator.CalcularRK(Convert.ToInt32(txtRk1.Text), Convert.ToDouble(txtRk2.Text), Convert.ToInt32(txtRk3.Text), Convert.ToDouble(txtHRK.Text, CultureInfo.InvariantCulture), Convert.ToInt32(txtLsInsp.Text));
                     dgvRK.DataSource = tablaRk;
                     List<object> vectores = simulator.Simular(Convert.ToInt32(tiempo.Text), Convert.ToInt32(iteraciones.Text),
                         Convert.ToInt32(i.Text), Convert.ToInt32(j.Text));
