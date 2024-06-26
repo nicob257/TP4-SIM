@@ -17,8 +17,8 @@
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnSimular = new System.Windows.Forms.Button();
             this.dataGridViewResultados = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
@@ -89,8 +89,8 @@
             // 
             // dataGridViewResultados
             // 
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewResultados.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewResultados.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridViewResultados.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -245,7 +245,7 @@
             this.txtProbCompra.Name = "txtProbCompra";
             this.txtProbCompra.Size = new System.Drawing.Size(116, 26);
             this.txtProbCompra.TabIndex = 13;
-            this.txtProbCompra.Text = "0,45";
+            this.txtProbCompra.Text = "0.45";
             this.txtProbCompra.TextChanged += new System.EventHandler(this.txtProbCompra_TextChanged);
             // 
             // txtProbEntrega
@@ -255,7 +255,7 @@
             this.txtProbEntrega.Name = "txtProbEntrega";
             this.txtProbEntrega.Size = new System.Drawing.Size(125, 26);
             this.txtProbEntrega.TabIndex = 14;
-            this.txtProbEntrega.Text = "0,25";
+            this.txtProbEntrega.Text = "0.25";
             // 
             // txtProbRetiro
             // 
@@ -264,7 +264,7 @@
             this.txtProbRetiro.Name = "txtProbRetiro";
             this.txtProbRetiro.Size = new System.Drawing.Size(116, 26);
             this.txtProbRetiro.TabIndex = 15;
-            this.txtProbRetiro.Text = "0,30";
+            this.txtProbRetiro.Text = "0.30";
             // 
             // label8
             // 
@@ -638,8 +638,8 @@
             // 
             // dgvRK
             // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvRK.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvRK.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dgvRK.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));

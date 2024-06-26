@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace RelojeriaSimulacion
 {
@@ -19,10 +20,10 @@ namespace RelojeriaSimulacion
             try
             {
                 if (
-                Convert.ToDouble(txtProbCompra.Text) >= 0 &&
-                Convert.ToDouble(txtProbEntrega.Text) >= 0 &&
-                Convert.ToDouble(txtProbRetiro.Text) >= 0 &&
-                (Convert.ToDouble(txtProbRetiro.Text) + Convert.ToDouble(txtProbEntrega.Text) + Convert.ToDouble(txtProbCompra.Text) == 1) &&
+                Convert.ToDouble(txtProbCompra.Text, CultureInfo.InvariantCulture) >= 0 &&
+                Convert.ToDouble(txtProbEntrega.Text, CultureInfo.InvariantCulture) >= 0 &&
+                Convert.ToDouble(txtProbRetiro.Text, CultureInfo.InvariantCulture) >= 0 &&
+                (Convert.ToDouble(txtProbRetiro.Text, CultureInfo.InvariantCulture) + Convert.ToDouble(txtProbEntrega.Text, CultureInfo.InvariantCulture) + Convert.ToDouble(txtProbCompra.Text, CultureInfo.InvariantCulture) == 1) &&
                 Convert.ToInt32(txtLiLleg.Text) >= 0 &&
                 Convert.ToInt32(txtLsLleg.Text) >= 0 &&
                 (Convert.ToInt32(txtLiLleg.Text) <= Convert.ToInt32(txtLsLleg.Text)) &&
@@ -46,7 +47,7 @@ namespace RelojeriaSimulacion
                 Convert.ToInt32(j.Text) >= 0
                 )
                 {
-                    simulator.InicializarProbabilidades(Convert.ToDouble(txtProbCompra.Text), Convert.ToDouble(txtProbEntrega.Text),
+                    simulator.InicializarProbabilidades(Convert.ToDouble(txtProbCompra.Text, CultureInfo.InvariantCulture), Convert.ToDouble(txtProbEntrega.Text, CultureInfo.InvariantCulture),
                     Convert.ToInt32(txtLiLleg.Text), Convert.ToInt32(txtLsLleg.Text),
                     Convert.ToInt32(txtLiCp.Text), Convert.ToInt32(txtLsCp.Text), Convert.ToInt32(txtLiRep.Text),
                     Convert.ToInt32(txtLsRep.Text), Convert.ToInt32(txtTmpOrden.Text),
