@@ -620,7 +620,7 @@
             this.txtRk2.Name = "txtRk2";
             this.txtRk2.Size = new System.Drawing.Size(30, 22);
             this.txtRk2.TabIndex = 54;
-            this.txtRk2.Text = "0,5";
+            this.txtRk2.Text = "0.5";
             // 
             // label18
             // 
